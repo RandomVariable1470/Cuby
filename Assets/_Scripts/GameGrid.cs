@@ -10,6 +10,8 @@ public class GameGrid : MonoBehaviour
     [SerializeField] private int width = 3;
     [SerializeField] private int gridSpaceSize = 5;
     [SerializeField] private float delayTime = 0.01f; 
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip audioClip;
 
     private GameObject[,] gameGrid;
 
@@ -36,6 +38,7 @@ public class GameGrid : MonoBehaviour
                 gameGrid[y, x].GetComponent<GridCell>().SetPosition(x,y);
                 gameGrid[y, x].transform.parent = transform; 
                 gameGrid[y, x].gameObject.name = "Grid Space ( X: " + x.ToString() + ", Y: " + y.ToString() + ") ";
+                audioSource.PlayOneShot(audioClip);
                 yield return new WaitForSeconds(delayTime);
             }
         }
