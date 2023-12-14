@@ -1817,6 +1817,7 @@ MonoBehaviour:
   gridSpaceSize: 6
   initialDelay: 0.2
   speedUpFactor: 0.015
+  <hasCompletedTheGrid>k__BackingField: 0
   audioSource: {fileID: 1885226959}
   audioClip: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1, type: 3}
 --- !u!82 &1885226959

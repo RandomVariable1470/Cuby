@@ -8,7 +8,7 @@ public class GameGrid : MonoBehaviour
 
     [SerializeField] private int height = 6;
     [SerializeField] private int width = 3;
-    [SerializeField] private float gridSpaceSize = 5f;
+    [SerializeField] private int gridSpaceSize = 5;
     [SerializeField] private float initialDelay = 0.5f;
     [SerializeField] private float speedUpFactor = 0.95f;
     [field:SerializeField] public bool hasCompletedTheGrid {get; private set;}
@@ -16,6 +16,7 @@ public class GameGrid : MonoBehaviour
     [SerializeField] private AudioClip audioClip;
 
     private GameObject[,] gameGrid;
+    private float delay;
 
     private void Start()
     {
@@ -38,7 +39,7 @@ public class GameGrid : MonoBehaviour
 
         gameGrid = new GameObject[height, width];
 
-        float delay = initialDelay;
+        delay = initialDelay;
 
         for (int y = 0; y < height; y++)
         {
@@ -58,6 +59,7 @@ public class GameGrid : MonoBehaviour
 
                 yield return new WaitForSeconds(delay); 
                 delay -= speedUpFactor;
+                delay = Mathf.Max(delay, 0f);
             }
         }
 
@@ -77,8 +79,8 @@ public class GameGrid : MonoBehaviour
 
     public Vector3 GetWorldPosFromGrid(Vector2Int gridPos)
     {
-        int x = gridPos.x * (int)gridSpaceSize;
-        int y = gridPos.y * (int)gridSpaceSize;
+        int x = gridPos.x * gridSpaceSize;
+        int y = gridPos.y * gridSpaceSize;
 
         return new Vector3(x, 0, y);
     }
