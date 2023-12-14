@@ -35,23 +35,28 @@ public class GameGrid : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 gameGrid[y, x] = Instantiate(gridCellPrefab, new Vector3(x * gridSpaceSize, 0, y * gridSpaceSize), Quaternion.identity);
-                gameGrid[y, x].GetComponent<GridCell>().SetPosition(x,y);
+                gameGrid[y, x].GetComponent<GridCell>().SetPosition(x, y);
                 gameGrid[y, x].transform.parent = transform; 
                 gameGrid[y, x].gameObject.name = "Grid Space ( X: " + x.ToString() + ", Y: " + y.ToString() + ") ";
-                audioSource.PlayOneShot(audioClip);
-                yield return new WaitForSeconds(delayTime);
+
+                // Ensure audio source and clip are not null before playing audio
+                if (audioSource != null && audioClip != null)
+                {
+                    audioSource.PlayOneShot(audioClip);
+                    yield return new WaitForSeconds(delayTime);
+                }
             }
         }
     }
 
-    // Gets Grid Position From Wrld Position
-    public Vector2Int GetGridPosFromWorld(Vector3 worldPositon)
+    // Gets Grid Position From World Position
+    public Vector2Int GetGridPosFromWorld(Vector3 worldPosition)
     {
-        int x = Mathf.FloorToInt(worldPositon.x / gridSpaceSize);
-        int y = Mathf.FloorToInt(worldPositon.z / gridSpaceSize);
+        int x = Mathf.FloorToInt(worldPosition.x / gridSpaceSize);
+        int y = Mathf.FloorToInt(worldPosition.z / gridSpaceSize);
 
-        x = Mathf.Clamp(x, 0, width);
-        y = Mathf.Clamp(x, 0, height);
+        x = Mathf.Clamp(x, 0, width - 1);
+        y = Mathf.Clamp(y, 0, height - 1);
 
         return new Vector2Int(x, y);
     }
