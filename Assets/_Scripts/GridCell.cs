@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class GridCell : MonoBehaviour
 {
+    [field:SerializeField] public GameObject objectInThisGridSpace {get; private set;}
+    [field:SerializeField] public bool isOccupied {get; private set;}
+
     private int posX;
     private int posY;
-
-    public GameObject objectInThisGridSpace = null;
-    public bool isOccupied = false;
 
     public void SetPosition(int x, int y)
     {
@@ -19,5 +19,17 @@ public class GridCell : MonoBehaviour
     public Vector2Int GetPosition()
     {
         return new Vector2Int(posX, posY);
+    }
+
+    private void OnCollisionEnter(Collision other) 
+    {
+        if (other.gameObject != null)
+        {
+            if (other.gameObject.layer != 6)
+            {
+                isOccupied = true;
+                objectInThisGridSpace = other.gameObject;
+            }
+        }
     }
 }

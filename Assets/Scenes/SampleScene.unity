@@ -1812,10 +1812,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridCellPrefab: {fileID: 222794676646655662, guid: 639e28a561819a447ab75ea37fce5ebd,
     type: 3}
-  height: 6
+  height: 5
   width: 3
   gridSpaceSize: 6
-  delayTime: 0.0075
+  initialDelay: 0.2
+  speedUpFactor: 0.015
   audioSource: {fileID: 1885226959}
   audioClip: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1, type: 3}
 --- !u!82 &1885226959

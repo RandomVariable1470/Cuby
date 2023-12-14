@@ -9,7 +9,9 @@ public class GameGrid : MonoBehaviour
     [SerializeField] private int height = 6;
     [SerializeField] private int width = 3;
     [SerializeField] private float gridSpaceSize = 5f;
-    [SerializeField] private float delayTime = 0.01f;
+    [SerializeField] private float initialDelay = 0.5f;
+    [SerializeField] private float speedUpFactor = 0.95f;
+    [field:SerializeField] public bool hasCompletedTheGrid {get; private set;}
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip audioClip;
 
@@ -36,6 +38,8 @@ public class GameGrid : MonoBehaviour
 
         gameGrid = new GameObject[height, width];
 
+        float delay = initialDelay;
+
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -52,9 +56,12 @@ public class GameGrid : MonoBehaviour
 
                 gameGrid[y, x] = newCell;
 
-                yield return new WaitForSeconds(delayTime);
+                yield return new WaitForSeconds(delay); 
+                delay -= speedUpFactor;
             }
         }
+
+        hasCompletedTheGrid = true;
     }
 
     public Vector2Int GetGridPosFromWorld(Vector3 worldPosition)
