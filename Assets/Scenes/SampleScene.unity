@@ -1814,7 +1814,7 @@ MonoBehaviour:
     type: 3}
   height: 5
   width: 3
-  gridSpaceSize: 6
+  gridSpaceSize: 5
   initialDelay: 0.2
   speedUpFactor: 0.015
   <hasCompletedTheGrid>k__BackingField: 0

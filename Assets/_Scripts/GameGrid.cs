@@ -8,7 +8,7 @@ public class GameGrid : MonoBehaviour
 
     [SerializeField] private int height = 6;
     [SerializeField] private int width = 3;
-    [SerializeField] private int gridSpaceSize = 5;
+    [SerializeField] private float gridSpaceSize = 5;
     [SerializeField] private float initialDelay = 0.5f;
     [SerializeField] private float speedUpFactor = 0.95f;
     [field:SerializeField] public bool hasCompletedTheGrid {get; private set;}
@@ -46,8 +46,10 @@ public class GameGrid : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 GameObject newCell = Instantiate(gridCellPrefab, new Vector3(x * gridSpaceSize, 0, y * gridSpaceSize), Quaternion.identity);
-                newCell.GetComponent<GridCell>().SetPosition(x, y);
+                GridCell gridCell  = newCell.GetComponent<GridCell>();
+                gridCell.SetPosition(y, x);
                 newCell.transform.parent = transform;
+                gridCell.SetColumn(y);
                 newCell.name = $"Grid Space (X: {x}, Y: {y})";
 
                 if (audioSource != null && audioClip != null)
@@ -79,8 +81,8 @@ public class GameGrid : MonoBehaviour
 
     public Vector3 GetWorldPosFromGrid(Vector2Int gridPos)
     {
-        int x = gridPos.x * gridSpaceSize;
-        int y = gridPos.y * gridSpaceSize;
+        int x = gridPos.x * Mathf.FloorToInt(gridSpaceSize);
+        int y = gridPos.y * Mathf.FloorToInt(gridSpaceSize);
 
         return new Vector3(x, 0, y);
     }
