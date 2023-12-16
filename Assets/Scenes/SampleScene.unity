@@ -1403,54 +1403,6 @@ Transform:
   - {fileID: 630725092}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1521110417
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1521110418}
-  - component: {fileID: 1521110419}
-  m_Layer: 0
-  m_Name: Input Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1521110418
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1521110417}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1887625831}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1521110419
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1521110417}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d3a4ff01c02c61429d5a64003ee91d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  grid: {fileID: 1885226958}
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 64
 --- !u!1 &1620077282
 GameObject:
   m_ObjectHideFlags: 0
@@ -1810,16 +1762,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 555ff2bd9b013f149b0465aa604240f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridCellPrefab: {fileID: 222794676646655662, guid: 639e28a561819a447ab75ea37fce5ebd,
+  _gridCellPrefab: {fileID: 222794676646655662, guid: 639e28a561819a447ab75ea37fce5ebd,
     type: 3}
-  height: 6
-  width: 3
-  gridSpaceSize: 5.75
-  initialDelay: 0.2
-  speedUpFactor: 0.015
-  <hasCompletedTheGrid>k__BackingField: 0
-  audioSource: {fileID: 1885226959}
-  audioClip: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1, type: 3}
+  _height: 6
+  _width: 3
+  _gridSpaceSize: 5
+  _initialDelay: 0.15
+  _speedUpFactor: 0.0075
+  <HasCompletedTheGrid>k__BackingField: 0
+  _audioSource: {fileID: 1885226959}
+  _audioClip: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1, type: 3}
 --- !u!82 &1885226959
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1944,8 +1896,7 @@ Transform:
   m_LocalPosition: {x: -0.55532587, y: -0.8969056, z: 1.5983387}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1521110418}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1900358955 stripped

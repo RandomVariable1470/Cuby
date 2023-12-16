@@ -1,22 +1,42 @@
 using System;
 using UnityEngine;
+using UnityEngine.Pool;
 using System.Collections;
 
 public class GameGrid : MonoBehaviour
 {
-    [SerializeField] private GameObject gridCellPrefab;
+    [Header("Grid Settings")]
+    [SerializeField] private GameObject _gridCellPrefab;
+    [SerializeField] private int _height = 6;
+    [SerializeField] private int _width = 3;
+    [SerializeField] private float _gridSpaceSize = 5;
 
-    [SerializeField] private int height = 6;
-    [SerializeField] private int width = 3;
-    [SerializeField] private float gridSpaceSize = 5;
-    [SerializeField] private float initialDelay = 0.5f;
-    [SerializeField] private float speedUpFactor = 0.95f;
-    [field:SerializeField] public bool hasCompletedTheGrid {get; private set;}
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip audioClip;
+    [Header("Creation Settings")]
+    [SerializeField] private float _initialDelay = 0.15f;
+    [SerializeField] private float _speedUpFactor = 0.0075f;
+    [field: SerializeField] public bool HasCompletedTheGrid { get; private set; }
 
-    private GameObject[,] gameGrid;
-    private float delay;
+    [Header("Audio Settings")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _audioClip;
+
+    // Private Variables
+    private GameObject[,] _gameGrid;
+    private ObjectPool<GameObject> _pool;
+    private float _delay;
+
+    private void Awake() 
+    {
+        _pool = new ObjectPool<GameObject>(() => {
+            return Instantiate(_gridCellPrefab);
+        }, gridCell =>{
+            gridCell.gameObject.SetActive(true);
+        }, gridCell =>{
+            gridCell.gameObject.SetActive(false); 
+        }, gridCell =>{
+            Destroy(gridCell.gameObject); 
+        }, false, 30, 60);
+    }
 
     private void Start()
     {
@@ -32,57 +52,59 @@ public class GameGrid : MonoBehaviour
 
     private IEnumerator CreateGrid()
     {
-        if (gridCellPrefab == null)
+        if (_gridCellPrefab == null)
         {
             throw new Exception("Grid Cell Prefab on the Game Grid has not been assigned");
         }
 
-        gameGrid = new GameObject[height, width];
+        _gameGrid = new GameObject[_height, _width];
 
-        delay = initialDelay;
+        _delay = _initialDelay;
 
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < _height; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < _width; x++)
             {
-                GameObject newCell = Instantiate(gridCellPrefab, new Vector3(x * gridSpaceSize, 0, y * gridSpaceSize), Quaternion.identity);
-                GridCell gridCell  = newCell.GetComponent<GridCell>();
-                gridCell.SetPosition(y, x);
+                var newCell = _pool.Get();
+                newCell.transform.position = new Vector3(x * _gridSpaceSize, 0, y * _gridSpaceSize);
                 newCell.transform.parent = transform;
-                gridCell.SetColumn(y);
                 newCell.name = $"Grid Space (X: {x}, Y: {y})";
 
-                if (audioSource != null && audioClip != null)
+                GridCell gridCell  = newCell.GetComponent<GridCell>();
+                gridCell.SetPosition(y, x);
+                gridCell.SetColumn(y);
+
+                if (_audioSource != null && _audioClip != null)
                 {
-                    audioSource.PlayOneShot(audioClip);
+                    _audioSource.PlayOneShot(_audioClip);
                 }
 
-                gameGrid[y, x] = newCell;
+                _gameGrid[y, x] = newCell;
 
-                yield return new WaitForSeconds(delay); 
-                delay -= speedUpFactor;
-                delay = Mathf.Max(delay, 0f);
+                yield return new WaitForSeconds(_delay); 
+                _delay -= _speedUpFactor;
+                _delay = Mathf.Max(_delay, 0f);
             }
         }
 
-        hasCompletedTheGrid = true;
+        HasCompletedTheGrid = true;
     }
 
     public Vector2Int GetGridPosFromWorld(Vector3 worldPosition)
     {
-        int x = Mathf.FloorToInt(worldPosition.x / gridSpaceSize);
-        int y = Mathf.FloorToInt(worldPosition.z / gridSpaceSize);
+        int x = Mathf.FloorToInt(worldPosition.x / _gridSpaceSize);
+        int y = Mathf.FloorToInt(worldPosition.z / _gridSpaceSize);
 
-        x = Mathf.Clamp(x, 0, width - 1);
-        y = Mathf.Clamp(y, 0, height - 1);
+        x = Mathf.Clamp(x, 0, _width - 1);
+        y = Mathf.Clamp(y, 0, _height - 1);
 
         return new Vector2Int(x, y);
     }
 
     public Vector3 GetWorldPosFromGrid(Vector2Int gridPos)
     {
-        int x = gridPos.x * Mathf.FloorToInt(gridSpaceSize);
-        int y = gridPos.y * Mathf.FloorToInt(gridSpaceSize);
+        int x = gridPos.x * Mathf.FloorToInt(_gridSpaceSize);
+        int y = gridPos.y * Mathf.FloorToInt(_gridSpaceSize);
 
         return new Vector3(x, 0, y);
     }
