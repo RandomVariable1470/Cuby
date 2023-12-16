@@ -9,6 +9,9 @@ public class GameGrid : MonoBehaviour
     [SerializeField] private GameObject _gridCellPrefab;
     [SerializeField] private int _height = 6;
     [SerializeField] private int _width = 3;
+    [SerializeField] private int _xCordinate;
+    [SerializeField] private int _yCordinate;
+    [SerializeField] private Color _finalGridColor;
     [SerializeField] private float _gridSpaceSize = 5;
 
     [Header("Creation Settings")]
@@ -87,7 +90,28 @@ public class GameGrid : MonoBehaviour
             }
         }
 
+        ColorGridCell(_xCordinate, _yCordinate, _finalGridColor);
         HasCompletedTheGrid = true;
+    }
+
+    public void ColorGridCell(int x, int y, Color color)
+    {
+        if (x >= 0 && y >= 0 && x < _gameGrid.GetLength(1) && y < _gameGrid.GetLength(0))
+        {
+            GameObject cellToColor = _gameGrid[y, x];
+            if (cellToColor != null)
+            {
+                Renderer cellRenderer = cellToColor.GetComponentInChildren<Renderer>();
+                if (cellRenderer != null)
+                {
+                    cellRenderer.material.color = color;
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Cell at position ({x}, {y}) does not exist in the grid or is out of bounds.");
+        }
     }
 
     public Vector2Int GetGridPosFromWorld(Vector3 worldPosition)
