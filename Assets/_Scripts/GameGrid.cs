@@ -9,22 +9,30 @@ public class GameGrid : MonoBehaviour
     [SerializeField] private GameObject _gridCellPrefab;
     [SerializeField] private int _height = 6;
     [SerializeField] private int _width = 3;
-    [SerializeField] private int _xCordinate;
-    [SerializeField] private int _yCordinate;
-    [SerializeField] private Color _finalGridColor;
     [SerializeField] private float _gridSpaceSize = 5;
+    [Space(5)]
+    [SerializeField] private int _xFinalCellCordinate;
+    [SerializeField] private int _yFinalCellCordinate;
+    [SerializeField] private Color _finalCellColor;
+    [Space(5)]
+    [SerializeField] private GameObject _playerPrefab;
+    [SerializeField] private int _spawnCellXCordinate; 
+    [SerializeField] private int _spawnCellYCordinate;
 
+    [Space(10)]
     [Header("Creation Settings")]
     [SerializeField] private float _initialDelay = 0.15f;
     [SerializeField] private float _speedUpFactor = 0.0075f;
     [field: SerializeField] public bool HasCompletedTheGrid { get; private set; }
 
+    [Space(10)]
     [Header("Audio Settings")]
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip _audioClip;
 
     // Private Variables
     private GameObject[,] _gameGrid;
+    private GameObject _player;
     private ObjectPool<GameObject> _pool;
     private float _delay;
 
@@ -90,8 +98,9 @@ public class GameGrid : MonoBehaviour
             }
         }
 
-        ColorGridCell(_xCordinate, _yCordinate, _finalGridColor);
         HasCompletedTheGrid = true;
+        ColorGridCell(_xFinalCellCordinate, _yFinalCellCordinate, _finalCellColor);
+        SpawnPlayer();
     }
 
     public void ColorGridCell(int x, int y, Color color)
@@ -110,7 +119,22 @@ public class GameGrid : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"Cell at position ({x}, {y}) does not exist in the grid or is out of bounds.");
+            throw new Exception($"Cell at position ({x}, {y}) does not exist in the grid or is out of bounds.");
+        }
+    }
+
+    private void SpawnPlayer()
+    {
+        if (_spawnCellXCordinate >= 0 &&_spawnCellYCordinate >= 0 && _spawnCellXCordinate < _width &&_spawnCellYCordinate < _height)
+        {
+            GameObject cellObject = _gameGrid[_spawnCellYCordinate, _spawnCellXCordinate];
+            GridCell gridCell = cellObject.GetComponent<GridCell>();
+
+            _player = Instantiate(_playerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
+        }
+        else
+        {
+            throw new Exception("Invalid spawn coordinates for the player.");
         }
     }
 

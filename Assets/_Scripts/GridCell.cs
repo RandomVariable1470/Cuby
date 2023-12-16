@@ -13,6 +13,10 @@ public class GridCell : MonoBehaviour
     [field: SerializeField] public GameObject ObjectInThisGridSpace {get; private set;}
     [field: SerializeField] public bool IsOccupied {get; private set;}
 
+    [field:Space(10)]
+    [field:Header("References")]
+    [field: SerializeField] public GameObject SpawnPoint {get; private set;}
+
     private int posX;
     private int posY;
 

@@ -33,6 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1685346594303093746}
+  - {fileID: 2041892513520074172}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6573158209838398239
@@ -47,10 +48,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03a82b2d1a39c03468677e85baff4fd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floatMagnitude: 0.5
-  floatSpeed: 1.75
-  <objectInThisGridSpace>k__BackingField: {fileID: 0}
-  <isOccupied>k__BackingField: 0
+  floatMagnitude: 0.2
+  floatSpeed: 3
+  <ObjectInThisGridSpace>k__BackingField: {fileID: 0}
+  <IsOccupied>k__BackingField: 0
+  <SpawnPoint>k__BackingField: {fileID: 1730987804498015526}
 --- !u!65 &301490822558654775
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -181,6 +183,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1730987804498015526
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2041892513520074172}
+  m_Layer: 6
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2041892513520074172
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1730987804498015526}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.5, y: 5, z: 2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1736480110806347161}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2761887958809761685
 GameObject:
   m_ObjectHideFlags: 0
