@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GridCell : MonoBehaviour
@@ -7,15 +6,16 @@ public class GridCell : MonoBehaviour
     [Header("Floating Animation")]
     [SerializeField] private float floatMagnitude = 0.5f;
     [SerializeField] private float floatSpeed = 1.75f;
+    [SerializeField] private float wavePhaseMultiplier = 0.5f;
 
     [field:Space(10)]
     [field:Header("Occupancy Status")]
-    [field: SerializeField] public GameObject ObjectInThisGridSpace {get; private set;}
-    [field: SerializeField] public bool IsOccupied {get; private set;}
+    [field:SerializeField] public GameObject ObjectInThisGridSpace { get; private set; }
+    [field:SerializeField] public bool IsOccupied { get; private set; }
 
     [field:Space(10)]
     [field:Header("References")]
-    [field: SerializeField] public GameObject SpawnPoint {get; private set;}
+    [field:SerializeField] public GameObject SpawnPoint { get; private set; }
 
     private int posX;
     private int posY;
@@ -40,7 +40,7 @@ public class GridCell : MonoBehaviour
 
         while (true)
         {
-            float phase = columnId * 0.5f;
+            float phase = columnId * wavePhaseMultiplier + (posX + posY) * 0.1f;
             float sineWave = Mathf.Sin((Time.time + phase) * floatSpeed);
             float yOffset = sineWave * floatMagnitude;
 
