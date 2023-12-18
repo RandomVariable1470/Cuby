@@ -3,12 +3,12 @@ using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections;
 
-public class GameGrid : MonoBehaviour
+public class GameGrid : Singleton<GameGrid>
 {
     [Header("Grid Settings")]
     [SerializeField] private GameObject _gridCellPrefab;
-    [SerializeField] private int _height = 6;
-    [SerializeField] private int _width = 3;
+    [field: SerializeField] public int _height {get; private set;}
+    [field: SerializeField] public int _width {get; private set;}
     [SerializeField] private float _gridSpaceSize = 5;
     [Space(5)]
     [SerializeField] private int _xFinalCellCordinate;
@@ -31,6 +31,7 @@ public class GameGrid : MonoBehaviour
     [SerializeField] private AudioClip _audioClip;
 
     // Private Variables
+    private SwipeDetection _swipeDetection;
     private GameObject[,] _gameGrid;
     private GameObject _player;
     private ObjectPool<GameObject> _pool;
@@ -54,6 +55,7 @@ public class GameGrid : MonoBehaviour
         try
         {
             StartCoroutine(CreateGrid());
+            _swipeDetection = SwipeDetection.Instance;
         }
         catch (Exception e)
         {
@@ -131,6 +133,8 @@ public class GameGrid : MonoBehaviour
             GridCell gridCell = cellObject.GetComponent<GridCell>();
 
             _player = Instantiate(_playerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
+            Player player = _player.GetComponent<Player>();
+            _swipeDetection._player = player;
         }
         else
         {
@@ -143,8 +147,8 @@ public class GameGrid : MonoBehaviour
         int x = Mathf.FloorToInt(worldPosition.x / _gridSpaceSize);
         int y = Mathf.FloorToInt(worldPosition.z / _gridSpaceSize);
 
-        x = Mathf.Clamp(x, 0, _width - 1);
-        y = Mathf.Clamp(y, 0, _height - 1);
+        x = Mathf.Clamp(x, 0, _width);
+        y = Mathf.Clamp(y, 0, _height);
 
         return new Vector2Int(x, y);
     }

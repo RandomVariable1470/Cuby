@@ -1122,8 +1122,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0f04c4cb360944eb9b82181849ccbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimumDistance: 0.2
-  maximumTime: 1
+  _minimumDistance: 0.2
+  _maximumTime: 1
+  _directionThreshold: 0.9
+  <swipeDirection>k__BackingField: 0
 --- !u!114 &1824873281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1183,8 +1185,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gridCellPrefab: {fileID: 222794676646655662, guid: 639e28a561819a447ab75ea37fce5ebd,
     type: 3}
-  _height: 6
-  _width: 3
+  <_height>k__BackingField: 6
+  <_width>k__BackingField: 3
   _gridSpaceSize: 6
   _xFinalCellCordinate: 1
   _yFinalCellCordinate: 5

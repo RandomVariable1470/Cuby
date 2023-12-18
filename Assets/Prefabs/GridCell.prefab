@@ -48,9 +48,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03a82b2d1a39c03468677e85baff4fd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floatMagnitude: 0.5
-  floatSpeed: 3
-  wavePhaseMultiplier: 0.1
+  floatMagnitude: 0.25
+  floatSpeed: 3.75
+  wavePhaseMultiplier: 0.3
   <ObjectInThisGridSpace>k__BackingField: {fileID: 0}
   <IsOccupied>k__BackingField: 0
   <SpawnPoint>k__BackingField: {fileID: 1730987804498015526}
