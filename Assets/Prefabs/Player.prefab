@@ -573,7 +573,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 390de77baea1aa6429f001ea0f997a9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 40
+  _range: 2
+  _leftOffset: {x: -6, y: 0, z: 0}
+  _rightOffset: {x: 6, y: 0, z: 0}
+  _backOffset: {x: 0, y: 0, z: 6}
+  _frontOffset: {x: 0, y: 0, z: -6}
+  _gravity: 40
 --- !u!54 &6183706438878195745
 Rigidbody:
   m_ObjectHideFlags: 0

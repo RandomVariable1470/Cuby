@@ -31,7 +31,6 @@ public class GameGrid : Singleton<GameGrid>
     [SerializeField] private AudioClip _audioClip;
 
     // Private Variables
-    private SwipeDetection _swipeDetection;
     private GameObject[,] _gameGrid;
     private GameObject _player;
     private ObjectPool<GameObject> _pool;
@@ -55,7 +54,6 @@ public class GameGrid : Singleton<GameGrid>
         try
         {
             StartCoroutine(CreateGrid());
-            _swipeDetection = SwipeDetection.Instance;
         }
         catch (Exception e)
         {
@@ -134,7 +132,6 @@ public class GameGrid : Singleton<GameGrid>
 
             _player = Instantiate(_playerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
             Player player = _player.GetComponent<Player>();
-            _swipeDetection._player = player;
         }
         else
         {
