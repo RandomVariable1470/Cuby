@@ -464,8 +464,8 @@ GameObject:
   - component: {fileID: 5108042451056592622}
   - component: {fileID: 6097168167405811288}
   - component: {fileID: 4609562465521892036}
-  - component: {fileID: -3813636265695764533}
   - component: {fileID: 6183706438878195745}
+  - component: {fileID: -3813636265695764533}
   - component: {fileID: 4114170556563657839}
   m_Layer: 0
   m_Name: Player
@@ -561,24 +561,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-3813636265695764533
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8187537117994103315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 390de77baea1aa6429f001ea0f997a9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _range: 2
-  _leftOffset: {x: -6, y: 0, z: 0}
-  _rightOffset: {x: 6, y: 0, z: 0}
-  _backOffset: {x: 0, y: 0, z: 6}
-  _frontOffset: {x: 0, y: 0, z: -6}
-  _gravity: 40
 --- !u!54 &6183706438878195745
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -606,6 +588,72 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 1
+--- !u!114 &-3813636265695764533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8187537117994103315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 390de77baea1aa6429f001ea0f997a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _range: 2
+  _jumpHeight: 2
+  _jumpDuration: 0.75
+  _airTimeMultiplier: 0.7
+  _bounceCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.78664684
+      outSlope: 0.78664684
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4242339
+      value: 0.33372226
+      inSlope: 1.1891673
+      outSlope: 1.1891673
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.10612229
+    - serializedVersion: 3
+      time: 0.6600588
+      value: 0.58030665
+      inSlope: 1.7704055
+      outSlope: 1.7704055
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.19573484
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.99871826
+      value: 1
+      inSlope: 1.6737324
+      outSlope: 1.6737324
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.054128647
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _leftOffset: {x: -6, y: 0, z: 0}
+  _rightOffset: {x: 6, y: 0, z: 0}
+  _backOffset: {x: 0, y: 0, z: 6}
+  _frontOffset: {x: 0, y: 0, z: -6}
+  _gravity: 40
+  _gridCellLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!95 &4114170556563657839
 Animator:
   serializedVersion: 5
