@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
     [SerializeField] private float _moveSpeed = 10f; 
     [SerializeField] private float _jumpHeight = 2f;
     [SerializeField] private float _range = 10f;
-    [SerializeField] private Transform _groundCheckPosition;
     [SerializeField] private AnimationCurve _bounceCurve;
     [SerializeField] private Vector3 _leftOffset;
     [SerializeField] private Vector3 _rightOffset;
@@ -32,6 +31,8 @@ public class Player : MonoBehaviour
     private Transform _frontCellPoint;
 
     private bool isMoving = false;
+    private Vector3 currentRotation = Vector3.zero;
+    private bool isRotating = false;
 
 
     private void Awake()
@@ -67,7 +68,7 @@ public class Player : MonoBehaviour
 
     bool IsGrounded()
     {
-        return Physics.CheckSphere(_groundCheckPosition.position, .1f, _gridCellLayerMask);
+        return Physics.CheckSphere(transform.localPosition + new Vector3(0f, -1.3f, 0f), .2f, _gridCellLayerMask);
     }
 
     private void ApplyExtraGravity()
@@ -163,18 +164,20 @@ public class Player : MonoBehaviour
         float duration = Mathf.Max(jumpDuration, moveDuration);
         float elapsedTime = 0f;
 
+        Vector3 jumpVelocity = Vector3.up * Mathf.Sqrt(2f * _gravity * jumpHeight);
+
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
 
             float t = Mathf.Clamp01(elapsedTime / duration);
 
-            Vector3 jumpVelocity = Vector3.up * Mathf.Sqrt(2f * _gravity * jumpHeight);
             Vector3 newPos = Vector3.Lerp(initialPosition, targetPosition, t);
 
             if (elapsedTime < jumpDuration)
             {
-                newPos.y += jumpVelocity.y * elapsedTime - 0.5f * _gravity * elapsedTime * elapsedTime;
+                float yOffset = jumpVelocity.y * elapsedTime - 0.5f * _gravity * elapsedTime * elapsedTime;
+                newPos.y = initialPosition.y + yOffset;
             }
 
             transform.position = newPos;
@@ -186,15 +189,20 @@ public class Player : MonoBehaviour
         isMoving = false;
     }
 
+
     private void OnSwipe(string swipe)
     {
         if (!IsGrounded()) return;
+
+        Vector3 rotation = Vector3.zero;
+
         switch (swipe)
         {
             case "Up":
                 if (_gridCellFront != null)
                 {
                     MakePlayerJumpToCell(_frontCellPoint);
+                    rotation = new Vector3(-90f, 0f, 0f);
                 }
                 break;
 
@@ -203,6 +211,7 @@ public class Player : MonoBehaviour
                  if (_gridCellBack != null)
                 {
                     MakePlayerJumpToCell(_backCellPoint);
+                    rotation = new Vector3(90f, 0f, 0f);
                 }
                 break;
 
@@ -210,6 +219,7 @@ public class Player : MonoBehaviour
                 if (_gridCellLeft != null)
                 {
                     MakePlayerJumpToCell(_leftCellPoint);
+                    rotation = new Vector3(0f, 0f, -90f);
                 }
                 break;
 
@@ -217,11 +227,32 @@ public class Player : MonoBehaviour
                 if (_gridCellRight != null)
                 {
                     MakePlayerJumpToCell(_rightCellPoint);
+                    rotation = new Vector3(0f, 0f, 90f);
                 }
                 break;
 
             default:
                 break;
         }
+
+        currentRotation += rotation;
+
+        StartCoroutine(RotateTo(Quaternion.Euler(currentRotation), 0.5f));
     }
+
+    private IEnumerator RotateTo(Quaternion targetRotation, float duration)
+{
+    Quaternion initialRotation = transform.rotation;
+    float elapsedTime = 0f;
+
+    while (elapsedTime < duration)
+    {
+        elapsedTime += Time.deltaTime;
+        float t = Mathf.Clamp01(elapsedTime / duration);
+        transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, t);
+        yield return null;
+    }
+
+    transform.rotation = targetRotation;
+}
 }
