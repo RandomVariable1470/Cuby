@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private float _moveSpeed = 10f; 
+    [SerializeField] private float _jumpHeight = 2f;
     [SerializeField] private float _range = 10f;
+    [SerializeField] private Transform _groundCheckPosition;
     [SerializeField] private AnimationCurve _bounceCurve;
     [SerializeField] private Vector3 _leftOffset;
     [SerializeField] private Vector3 _rightOffset;
@@ -29,7 +32,7 @@ public class Player : MonoBehaviour
     private Transform _frontCellPoint;
 
     private bool isMoving = false;
-    private float jumpDuration = 0.5f;
+
 
     private void Awake()
     {
@@ -39,7 +42,6 @@ public class Player : MonoBehaviour
     private void Start() 
     {
         _rb = GetComponent<Rigidbody>();
-        ApplyExtraGravity();
     }
 
     private void OnEnable()
@@ -58,6 +60,24 @@ public class Player : MonoBehaviour
         AssignCellPoints();
     }
 
+    private void FixedUpdate() 
+    {
+        ApplyExtraGravity();
+    }
+
+    bool IsGrounded()
+    {
+        return Physics.CheckSphere(_groundCheckPosition.position, .1f, _gridCellLayerMask);
+    }
+
+    private void ApplyExtraGravity()
+    {
+        if (!IsGrounded())
+        {
+            _rb.AddForce(Vector3.down * _gravity, ForceMode.Force);
+        }
+    }
+
     private void RaycastWork()
     {
         RaycastHit hitLeft, hitRight, hitBack, hitFront;
@@ -71,17 +91,33 @@ public class Player : MonoBehaviour
         {
             _gridCellLeft = hitLeft.transform.gameObject.GetComponent<GridCell>();
         }
+        else
+        {
+            _gridCellLeft = null;
+        }
         if (rightHit)
         {
             _gridCellRight = hitRight.transform.gameObject.GetComponent<GridCell>();
+        }
+        else
+        {
+            _gridCellRight = null;
         }
         if (backHit)
         {
             _gridCellBack = hitBack.transform.gameObject.GetComponent<GridCell>();
         }
+        else
+        {
+            _gridCellBack = null;
+        }
         if (frontHit)
         {
             _gridCellFront = hitFront.transform.gameObject.GetComponent<GridCell>();
+        }
+        else
+        {
+            _gridCellFront = null;
         }
     }
 
@@ -109,21 +145,40 @@ public class Player : MonoBehaviour
     {
         if (cell != null && !isMoving)
         {
-            StartCoroutine(JumpToCell(cell.position));
+            StartCoroutine(MoveToCell(cell.position));
         }
     }
 
-    private IEnumerator JumpToCell(Vector3 targetPosition)
+    private IEnumerator MoveToCell(Vector3 targetPosition)
     {
         isMoving = true;
         Vector3 initialPosition = transform.position;
+
+        float jumpHeight = _jumpHeight;
+        float jumpDuration = Mathf.Sqrt(2f * jumpHeight / _gravity);
+
+        float distance = Vector3.Distance(initialPosition, targetPosition);
+        float moveDuration = distance / _moveSpeed;
+
+        float duration = Mathf.Max(jumpDuration, moveDuration);
         float elapsedTime = 0f;
 
-        while (elapsedTime < jumpDuration)
+        while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            float t = elapsedTime / jumpDuration;
-            transform.position = Vector3.Lerp(initialPosition, targetPosition, _bounceCurve.Evaluate(t));
+
+            float t = Mathf.Clamp01(elapsedTime / duration);
+
+            Vector3 jumpVelocity = Vector3.up * Mathf.Sqrt(2f * _gravity * jumpHeight);
+            Vector3 newPos = Vector3.Lerp(initialPosition, targetPosition, t);
+
+            if (elapsedTime < jumpDuration)
+            {
+                newPos.y += jumpVelocity.y * elapsedTime - 0.5f * _gravity * elapsedTime * elapsedTime;
+            }
+
+            transform.position = newPos;
+
             yield return null;
         }
 
@@ -131,26 +186,23 @@ public class Player : MonoBehaviour
         isMoving = false;
     }
 
-    private void ApplyExtraGravity()
-    {
-        _rb.AddForce(Vector3.down * _gravity, ForceMode.Force);
-    }
-
     private void OnSwipe(string swipe)
     {
+        if (!IsGrounded()) return;
         switch (swipe)
         {
             case "Up":
-                if (_gridCellBack != null)
+                if (_gridCellFront != null)
                 {
-                    MakePlayerJumpToCell(_backCellPoint);
+                    MakePlayerJumpToCell(_frontCellPoint);
                 }
                 break;
 
             case "Down":
-                if (_gridCellFront != null)
+
+                 if (_gridCellBack != null)
                 {
-                    MakePlayerJumpToCell(_frontCellPoint);
+                    MakePlayerJumpToCell(_backCellPoint);
                 }
                 break;
 
