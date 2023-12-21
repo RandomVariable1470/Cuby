@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _moveSpeed = 10f; 
     [SerializeField] private float _jumpHeight = 2f;
     [SerializeField] private float _range = 10f;
+    [SerializeField] private float _groundCheck;
     [SerializeField] private AnimationCurve _bounceCurve;
     [SerializeField] private Vector3 _leftOffset;
     [SerializeField] private Vector3 _rightOffset;
@@ -31,9 +32,9 @@ public class Player : MonoBehaviour
     private Transform _frontCellPoint;
 
     private bool isMoving = false;
-    private Vector3 currentRotation = Vector3.zero;
     private bool isRotating = false;
-
+    private Quaternion targetRotation;
+    private bool _swipeEnabled = true; 
 
     private void Awake()
     {
@@ -66,9 +67,9 @@ public class Player : MonoBehaviour
         ApplyExtraGravity();
     }
 
-    bool IsGrounded()
+    private bool IsGrounded()
     {
-        return Physics.CheckSphere(transform.localPosition + new Vector3(0f, -1.3f, 0f), .2f, _gridCellLayerMask);
+        return Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, _groundCheck, _gridCellLayerMask);
     }
 
     private void ApplyExtraGravity()
@@ -189,12 +190,9 @@ public class Player : MonoBehaviour
         isMoving = false;
     }
 
-
     private void OnSwipe(string swipe)
     {
-        if (!IsGrounded()) return;
-
-        Vector3 rotation = Vector3.zero;
+        if (!IsGrounded() && !_swipeEnabled) return;
 
         switch (swipe)
         {
@@ -202,16 +200,15 @@ public class Player : MonoBehaviour
                 if (_gridCellFront != null)
                 {
                     MakePlayerJumpToCell(_frontCellPoint);
-                    rotation = new Vector3(-90f, 0f, 0f);
+                    RotateCubeSmoothly(Quaternion.Euler(90, 0, 0));
                 }
                 break;
 
             case "Down":
-
-                 if (_gridCellBack != null)
+                if (_gridCellBack != null)
                 {
                     MakePlayerJumpToCell(_backCellPoint);
-                    rotation = new Vector3(90f, 0f, 0f);
+                    RotateCubeSmoothly(Quaternion.Euler(-90, 0, 0));
                 }
                 break;
 
@@ -219,7 +216,7 @@ public class Player : MonoBehaviour
                 if (_gridCellLeft != null)
                 {
                     MakePlayerJumpToCell(_leftCellPoint);
-                    rotation = new Vector3(0f, 0f, -90f);
+                    RotateCubeSmoothly(Quaternion.Euler(0, 0, 90));
                 }
                 break;
 
@@ -227,32 +224,58 @@ public class Player : MonoBehaviour
                 if (_gridCellRight != null)
                 {
                     MakePlayerJumpToCell(_rightCellPoint);
-                    rotation = new Vector3(0f, 0f, 90f);
+                    RotateCubeSmoothly(Quaternion.Euler(0, 0, -90));
                 }
                 break;
 
             default:
                 break;
         }
-
-        currentRotation += rotation;
-
-        StartCoroutine(RotateTo(Quaternion.Euler(currentRotation), 0.5f));
+        StartCoroutine(EnableSwipeAfterDelay(1.5f));
     }
 
-    private IEnumerator RotateTo(Quaternion targetRotation, float duration)
-{
-    Quaternion initialRotation = transform.rotation;
-    float elapsedTime = 0f;
-
-    while (elapsedTime < duration)
+    private IEnumerator EnableSwipeAfterDelay(float delay)
     {
-        elapsedTime += Time.deltaTime;
-        float t = Mathf.Clamp01(elapsedTime / duration);
-        transform.rotation = Quaternion.Lerp(initialRotation, targetRotation, t);
-        yield return null;
+        _swipeEnabled = false;
+        yield return new WaitForSeconds(delay);
+        _swipeEnabled = true;
     }
 
-    transform.rotation = targetRotation;
-}
+    private void RotateCubeSmoothly(Quaternion targetRotation)
+    {
+        this.targetRotation = targetRotation;
+        StartCoroutine(SmoothRotation());
+    }
+
+    private IEnumerator SmoothRotation()
+    {
+        if (isRotating)
+        {
+            yield break;
+        }
+
+        isRotating = true;
+
+        Quaternion startRotation = transform.rotation;
+        Quaternion previousTarget = transform.rotation;
+
+        float elapsedTime = 0f;
+        float rotationDuration = 0.5f; // Adjust the rotation duration
+
+        while (elapsedTime < rotationDuration)
+        {
+            if (!isRotating)
+            {
+                yield break;
+            }
+
+            transform.rotation = Quaternion.Slerp(startRotation, targetRotation * previousTarget, elapsedTime / rotationDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.rotation = targetRotation * previousTarget;
+        isRotating = false;
+    }
+
 }
