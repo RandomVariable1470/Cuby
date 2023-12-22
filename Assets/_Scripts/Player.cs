@@ -5,18 +5,31 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 10f; 
+    [Header("Movement Settings")]
+    [SerializeField] private float _moveSpeed = 10f;
     [SerializeField] private float _jumpHeight = 2f;
     [SerializeField] private float _range = 10f;
     [SerializeField] private float _groundCheck;
+
+    [Space(5)]
+    [Header("Audio & Effects")]
+    [SerializeField] private AudioClip _spawnSound;
+    [SerializeField] private AudioClip _swipSound;
     [SerializeField] private AnimationCurve _bounceCurve;
+
+    [Space(5)]
+    [Header("Offsets")]
     [SerializeField] private Vector3 _leftOffset;
     [SerializeField] private Vector3 _rightOffset;
     [SerializeField] private Vector3 _backOffset;
     [SerializeField] private Vector3 _frontOffset;
+
+    [Space(5)]
+    [Header("Physics")]
     [SerializeField] private float _gravity = 40f;
     [SerializeField] private LayerMask _gridCellLayerMask;
 
+    //PrivateVariables
     private Rigidbody _rb;
 
     private SwipeListener swipeListener;
@@ -31,10 +44,14 @@ public class Player : MonoBehaviour
     private Transform _backCellPoint;
     private Transform _frontCellPoint;
 
-    private bool isMoving = false;
-    private bool isRotating = false;
-    private Quaternion targetRotation;
-    private bool _swipeEnabled = true; 
+    private bool _isMoving = false;
+    private bool _isRotating = false;
+    private bool _wasMoving;
+    private Quaternion _targetRotation;
+    private AudioSource _audioSource;
+
+
+    #region Initilization
 
     private void Awake()
     {
@@ -44,6 +61,7 @@ public class Player : MonoBehaviour
     private void Start() 
     {
         _rb = GetComponent<Rigidbody>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -60,12 +78,16 @@ public class Player : MonoBehaviour
     {
         RaycastWork();
         AssignCellPoints();
+        SwipeEffects();
     }
 
     private void FixedUpdate() 
     {
         ApplyExtraGravity();
     }
+    #endregion
+
+    #region Movement Handling
 
     private bool IsGrounded()
     {
@@ -79,6 +101,7 @@ public class Player : MonoBehaviour
             _rb.AddForce(Vector3.down * _gravity, ForceMode.Force);
         }
     }
+
 
     private void RaycastWork()
     {
@@ -145,15 +168,17 @@ public class Player : MonoBehaviour
 
     private void MakePlayerJumpToCell(Transform cell)
     {
-        if (cell != null && !isMoving)
+        if (cell != null && !_isMoving)
         {
+            _wasMoving = true;
             StartCoroutine(MoveToCell(cell.position));
         }
     }
 
     private IEnumerator MoveToCell(Vector3 targetPosition)
     {
-        isMoving = true;
+        _isMoving = true;
+
         Vector3 initialPosition = transform.position;
 
         float jumpHeight = _jumpHeight;
@@ -187,12 +212,17 @@ public class Player : MonoBehaviour
         }
 
         transform.position = targetPosition;
-        isMoving = false;
+
+        _isMoving = false;
     }
+
+    #endregion
+
+    #region Swipe Handling
 
     private void OnSwipe(string swipe)
     {
-        if (!IsGrounded() && !_swipeEnabled) return;
+        if (!IsGrounded()) return;
 
         switch (swipe)
         {
@@ -231,51 +261,66 @@ public class Player : MonoBehaviour
             default:
                 break;
         }
-        StartCoroutine(EnableSwipeAfterDelay(1.5f));
     }
 
-    private IEnumerator EnableSwipeAfterDelay(float delay)
-    {
-        _swipeEnabled = false;
-        yield return new WaitForSeconds(delay);
-        _swipeEnabled = true;
-    }
+    #endregion
+
+    #region Rotation Handling
 
     private void RotateCubeSmoothly(Quaternion targetRotation)
     {
-        this.targetRotation = targetRotation;
+        this._targetRotation = targetRotation;
         StartCoroutine(SmoothRotation());
     }
 
     private IEnumerator SmoothRotation()
     {
-        if (isRotating)
+        if (_isRotating)
         {
             yield break;
         }
 
-        isRotating = true;
+        _isRotating = true;
 
         Quaternion startRotation = transform.rotation;
         Quaternion previousTarget = transform.rotation;
 
         float elapsedTime = 0f;
-        float rotationDuration = 0.5f; // Adjust the rotation duration
+        float rotationDuration = 0.3f;
 
         while (elapsedTime < rotationDuration)
         {
-            if (!isRotating)
+            if (!_isRotating)
             {
                 yield break;
             }
 
-            transform.rotation = Quaternion.Slerp(startRotation, targetRotation * previousTarget, elapsedTime / rotationDuration);
+            transform.rotation = Quaternion.Slerp(startRotation, _targetRotation * previousTarget, elapsedTime / rotationDuration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        transform.rotation = targetRotation * previousTarget;
-        isRotating = false;
+        transform.rotation = _targetRotation * previousTarget;
+        _isRotating = false;
     }
 
+    #endregion
+
+    #region Audio & Effects
+
+    private void SwipeEffects()
+    {
+        if (_wasMoving && IsGrounded() && !_isMoving)
+        {
+            _audioSource.PlayOneShot(_swipSound);
+            _wasMoving = false;
+        }
+    }
+
+    public void OnSpawnSound()
+    {
+        _audioSource.PlayOneShot(_spawnSound);
+    }
+
+    #endregion
 }
