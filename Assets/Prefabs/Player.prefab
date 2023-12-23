@@ -484,7 +484,7 @@ Transform:
   m_GameObject: {fileID: 8187537117994103315}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.35, y: 4.6818333, z: 2.620975}
+  m_LocalPosition: {x: 7.35, y: 4.50675, z: 2.5616746}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -607,6 +607,8 @@ MonoBehaviour:
   _groundCheck: 2
   _spawnSound: {fileID: 8300000, guid: 2aa42b757137445eea181c743c2cc9e4, type: 3}
   _swipSound: {fileID: 8300000, guid: 6404e6f82f85d4050b9d2d98d2f3392a, type: 3}
+  _landParticle: {fileID: 4768112264315684331, guid: a88e4bbf66a4fba44a47c27ed9fbe4ac,
+    type: 3}
   _bounceCurve:
     serializedVersion: 2
     m_Curve:

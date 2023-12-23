@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GG.Infrastructure.Utils.Swipe;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -25,7 +26,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector3 _frontOffset;
 
     [Space(5)]
-    [Header("Physics")]
+    [Header(("Ground Check and Physics"))]
     [SerializeField] private float _gravity = 40f;
     [SerializeField] private LayerMask _gridCellLayerMask;
 
@@ -323,4 +324,4 @@ public class Player : MonoBehaviour
     }
 
     #endregion
-}
+}   
