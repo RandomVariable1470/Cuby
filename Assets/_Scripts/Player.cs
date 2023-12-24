@@ -50,6 +50,7 @@ public class Player : MonoBehaviour
     private bool _wasMoving;
     private Quaternion _targetRotation;
     private AudioSource _audioSource;
+    private CinemachineShake _shake;
 
 
     #region Initilization
@@ -63,6 +64,7 @@ public class Player : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         _audioSource = GetComponent<AudioSource>();
+        _shake = CinemachineShake.Instance;
     }
 
     private void OnEnable()
@@ -315,6 +317,7 @@ public class Player : MonoBehaviour
         {
             _audioSource.PlayOneShot(_swipSound);
             _wasMoving = false;
+            _shake.ShakeCamera(0.3f, 0.1f);
         }
     }
 
@@ -324,4 +327,5 @@ public class Player : MonoBehaviour
     }
 
     #endregion
-}   
+    
+}  

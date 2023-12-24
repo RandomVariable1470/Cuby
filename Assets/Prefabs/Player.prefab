@@ -605,10 +605,8 @@ MonoBehaviour:
   _jumpHeight: 0
   _range: 2
   _groundCheck: 2
-  _spawnSound: {fileID: 8300000, guid: 2aa42b757137445eea181c743c2cc9e4, type: 3}
-  _swipSound: {fileID: 8300000, guid: 6404e6f82f85d4050b9d2d98d2f3392a, type: 3}
-  _landParticle: {fileID: 4768112264315684331, guid: a88e4bbf66a4fba44a47c27ed9fbe4ac,
-    type: 3}
+  _spawnSound: {fileID: 8300000, guid: e0cc9fb8a66924ebba0018f428ff3c52, type: 3}
+  _swipSound: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1, type: 3}
   _bounceCurve:
     serializedVersion: 2
     m_Curve:
