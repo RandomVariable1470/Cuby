@@ -131,30 +131,10 @@ public class GameGrid : Singleton<GameGrid>
             GridCell gridCell = cellObject.GetComponent<GridCell>();
 
             _player = Instantiate(_playerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
-            Player player = _player.GetComponent<Player>();
         }
         else
         {
             throw new Exception("Invalid spawn coordinates for the player.");
         }
-    }
-
-    public Vector2Int GetGridPosFromWorld(Vector3 worldPosition)
-    {
-        int x = Mathf.FloorToInt(worldPosition.x / _gridSpaceSize);
-        int y = Mathf.FloorToInt(worldPosition.z / _gridSpaceSize);
-
-        x = Mathf.Clamp(x, 0, _width);
-        y = Mathf.Clamp(y, 0, _height);
-
-        return new Vector2Int(x, y);
-    }
-
-    public Vector3 GetWorldPosFromGrid(Vector2Int gridPos)
-    {
-        int x = gridPos.x * Mathf.FloorToInt(_gridSpaceSize);
-        int y = gridPos.y * Mathf.FloorToInt(_gridSpaceSize);
-
-        return new Vector3(x, 0, y);
     }
 }

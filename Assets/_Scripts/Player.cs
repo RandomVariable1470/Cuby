@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector3 _frontOffset;
 
     [Space(5)]
-    [Header(("Ground Check and Physics"))]
+    [Header("Ground Check and Physics")]
     [SerializeField] private float _gravity = 40f;
     [SerializeField] private LayerMask _gridCellLayerMask;
 
@@ -211,7 +211,7 @@ public class Player : MonoBehaviour
 
             transform.position = newPos;
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         transform.position = targetPosition;
@@ -300,7 +300,7 @@ public class Player : MonoBehaviour
 
             transform.rotation = Quaternion.Slerp(startRotation, _targetRotation * previousTarget, elapsedTime / rotationDuration);
             elapsedTime += Time.deltaTime;
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
 
         transform.rotation = _targetRotation * previousTarget;
@@ -317,7 +317,7 @@ public class Player : MonoBehaviour
         {
             _audioSource.PlayOneShot(_swipSound);
             _wasMoving = false;
-            _shake.ShakeCamera(0.3f, 0.1f);
+            _shake.ShakeCamera(0.5f, 0.1f);
         }
     }
 
