@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GridCell : MonoBehaviour
@@ -22,6 +23,8 @@ public class GridCell : MonoBehaviour
 
     private Vector3 initialPosition;
     private int columnId;
+
+    private Player player;
 
     private void Start()
     {
@@ -49,7 +52,7 @@ public class GridCell : MonoBehaviour
             Vector3 newPosition = initialPosition + new Vector3(0, offset, 0);
             transform.position = newPosition;
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
     }
 
@@ -70,11 +73,72 @@ public class GridCell : MonoBehaviour
         {
             IsOccupied = true;
             ObjectInThisGridSpace = other.gameObject;
+            player = ObjectInThisGridSpace.GetComponent<Player>();
         }
         else
         {
             IsOccupied = false;
             ObjectInThisGridSpace = null;
+            player = null;
         }
     }
+
+    private async void OnTriggerEnter(Collider other) 
+    {
+        if (other.gameObject != null)
+        {
+            switch (other.gameObject.name)
+            {
+                case GREEN_TAG:
+                    await Task.Delay(100);
+                    player.ChangeColor(ColorCode.Green);
+                    Debug.Log("Green");
+                    break;
+
+                case CYAN_TAG:
+                    await Task.Delay(100);
+                    player.ChangeColor(ColorCode.Cyan);
+                    Debug.Log("Cyan");
+                    break;
+
+                case RED_TAG:
+                    await Task.Delay(100);
+                    player.ChangeColor(ColorCode.Red);
+                    Debug.Log("Red");
+                    break;
+
+                case BLUE_TAG:
+                    await Task.Delay(100);
+                    player.ChangeColor(ColorCode.Blue);
+                    Debug.Log("Blue");
+                    break;
+
+                case YELLOW_TAG:
+                    await Task.Delay(100);
+                    player.ChangeColor(ColorCode.Yellow);
+                    Debug.Log("Yellow");
+                    break;
+                
+                case ORANGE_TAG:
+                    await Task.Delay(100);
+                    player.ChangeColor(ColorCode.Orange);
+                    Debug.Log("Orange");
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    #region Cached Properties
+
+    private const string GREEN_TAG = "Green";
+    private const string CYAN_TAG = "Cyan";
+    private const string RED_TAG = "Red";
+    private const string BLUE_TAG = "Blue";
+    private const string YELLOW_TAG = "Yellow";
+    private const string ORANGE_TAG = "Orange";
+
+    #endregion
 }

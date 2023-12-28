@@ -1,8 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using GG.Infrastructure.Utils.Swipe;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
+
+public enum ColorCode
+{
+    Red,
+    Green,
+    Blue,
+    Yellow,
+    Cyan,
+    Orange
+}
 
 public class Player : MonoBehaviour
 {
@@ -16,7 +27,11 @@ public class Player : MonoBehaviour
     [Header("Audio & Effects")]
     [SerializeField] private AudioClip _spawnSound;
     [SerializeField] private AudioClip _swipSound;
+    [Space(2)]
     [SerializeField] private AnimationCurve _bounceCurve;
+    [Space(2)]
+    [SerializeField] private GameObject _jumpParticle;
+    [SerializeField] private GameObject _landParticle;
 
     [Space(5)]
     [Header("Offsets")]
@@ -31,6 +46,8 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask _gridCellLayerMask;
 
     //PrivateVariables
+    [HideInInspector] public ColorCode colorBelow;
+
     private Rigidbody _rb;
 
     private SwipeListener swipeListener;
@@ -51,13 +68,14 @@ public class Player : MonoBehaviour
     private Quaternion _targetRotation;
     private AudioSource _audioSource;
     private CinemachineShake _shake;
-
+    private GameManager _gameManager;
 
     #region Initilization
 
     private void Awake()
     {
         swipeListener = SwipeListener.Instance;
+        _gameManager = GameManager.Instance;
     }
 
     private void Start() 
@@ -82,12 +100,15 @@ public class Player : MonoBehaviour
         RaycastWork();
         AssignCellPoints();
         SwipeEffects();
+
+        _gameManager.colorText.text = $"Color: {colorBelow}";
     }
 
     private void FixedUpdate() 
     {
         ApplyExtraGravity();
     }
+
     #endregion
 
     #region Movement Handling
@@ -316,14 +337,28 @@ public class Player : MonoBehaviour
         if (_wasMoving && IsGrounded() && !_isMoving)
         {
             _audioSource.PlayOneShot(_swipSound);
+
             _wasMoving = false;
-            _shake.ShakeCamera(0.5f, 0.1f);
+
+            _shake.ShakeCamera(1f, 0.1f);
+
+            //GameObject jumpParticle = Instantiate(_jumpParticle, transform.position, Quaternion.identity);
+            //GameObject landParticle = Instantiate(_landParticle, transform.position + new Vector3(0f, -2.5f, 0f), Quaternion.identity);
         }
     }
 
     public void OnSpawnSound()
     {
         _audioSource.PlayOneShot(_spawnSound);
+    }
+
+    #endregion
+
+    #region ColorHandling
+
+    public void ChangeColor(ColorCode _color)
+    {
+        colorBelow = _color;
     }
 
     #endregion
