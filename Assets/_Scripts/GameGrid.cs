@@ -32,7 +32,6 @@ public class GameGrid : Singleton<GameGrid>
 
     // Private Variables
     private GameObject[,] _gameGrid;
-    private GameObject _player;
     private ObjectPool<GameObject> _pool;
     private float _delay;
 
@@ -130,7 +129,8 @@ public class GameGrid : Singleton<GameGrid>
             GameObject cellObject = _gameGrid[_spawnCellYCordinate, _spawnCellXCordinate];
             GridCell gridCell = cellObject.GetComponent<GridCell>();
 
-            _player = Instantiate(_playerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
+            Instantiate(_playerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
+            
         }
         else
         {

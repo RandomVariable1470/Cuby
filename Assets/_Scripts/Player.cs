@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using GG.Infrastructure.Utils.Swipe;
-using TMPro;
-using Unity.Mathematics;
 using UnityEngine;
 
 public enum ColorCode
@@ -45,10 +43,20 @@ public class Player : MonoBehaviour
     [SerializeField] private float _gravity = 40f;
     [SerializeField] private LayerMask _gridCellLayerMask;
 
-    //PrivateVariables
-    [HideInInspector] public ColorCode colorBelow;
+    [Space(5)]
+    [Header("Color")]
+    [SerializeField] private Color _redColor;
+    [SerializeField] private Color _cyanColor;
+    [SerializeField] private Color _yellowColor;
+    [SerializeField] private Color _blueColor;
+    [SerializeField] private Color _greenColor;
+    [SerializeField] private Color _orangeColor;
+    [Space(5)]
+    [SerializeField] private float _downDistanceColor;
+    [SerializeField] private LayerMask _colorCellMask;
+    public ColorCode colorBelow;
 
-    private Rigidbody _rb;
+    //Private Variables
 
     private SwipeListener swipeListener;
 
@@ -65,22 +73,25 @@ public class Player : MonoBehaviour
     private bool _isMoving = false;
     private bool _isRotating = false;
     private bool _wasMoving;
+    private bool _canSwipe = true;
+    private float _swipeCooldownTime = 0.1f;
+    private float _swipeCooldownTimer = 0f;
+
     private Quaternion _targetRotation;
     private AudioSource _audioSource;
     private CinemachineShake _shake;
-    private GameManager _gameManager;
+    private ParticleSystem.MinMaxGradient _currentParticleGradient;
+    private float verticalVelocity = 0f;
 
     #region Initilization
 
     private void Awake()
     {
         swipeListener = SwipeListener.Instance;
-        _gameManager = GameManager.Instance;
     }
 
     private void Start() 
     {
-        _rb = GetComponent<Rigidbody>();
         _audioSource = GetComponent<AudioSource>();
         _shake = CinemachineShake.Instance;
     }
@@ -100,8 +111,8 @@ public class Player : MonoBehaviour
         RaycastWork();
         AssignCellPoints();
         SwipeEffects();
-
-        _gameManager.colorText.text = $"Color: {colorBelow}";
+        SwipeCounter();
+        CheckForColor();
     }
 
     private void FixedUpdate() 
@@ -122,9 +133,25 @@ public class Player : MonoBehaviour
     {
         if (!IsGrounded())
         {
-            _rb.AddForce(Vector3.down * _gravity, ForceMode.Force);
+            verticalVelocity -= _gravity * Time.deltaTime;
+
+            Vector3 newPosition = transform.position;
+            newPosition.y += verticalVelocity * Time.deltaTime;
+
+            if (newPosition.y < 0f)
+            {
+                newPosition.y = 0f;
+                verticalVelocity = 0f;
+            }
+
+            transform.position = newPosition;
+        }
+        else
+        {
+            verticalVelocity = 0f;
         }
     }
+
 
 
     private void RaycastWork()
@@ -246,7 +273,12 @@ public class Player : MonoBehaviour
 
     private void OnSwipe(string swipe)
     {
-        if (!IsGrounded()) return;
+        if (!_canSwipe || !IsGrounded()) return;
+
+        _canSwipe = false;
+        _swipeCooldownTimer = 0f; 
+
+        SpawnJumparticle();
 
         switch (swipe)
         {
@@ -284,6 +316,20 @@ public class Player : MonoBehaviour
 
             default:
                 break;
+        }
+    }
+
+    private void SwipeCounter()
+    {
+        if (!_canSwipe)
+        {
+            _swipeCooldownTimer += Time.deltaTime;
+
+            if (_swipeCooldownTimer >= _swipeCooldownTime)
+            {
+                _canSwipe = true;
+                _swipeCooldownTimer = 0f; 
+            }
         }
     }
 
@@ -341,9 +387,7 @@ public class Player : MonoBehaviour
             _wasMoving = false;
 
             _shake.ShakeCamera(1f, 0.1f);
-
-            //GameObject jumpParticle = Instantiate(_jumpParticle, transform.position, Quaternion.identity);
-            //GameObject landParticle = Instantiate(_landParticle, transform.position + new Vector3(0f, -2.5f, 0f), Quaternion.identity);
+            Invoke(nameof(SpawnLandParticle), 0.1f);
         }
     }
 
@@ -352,15 +396,139 @@ public class Player : MonoBehaviour
         _audioSource.PlayOneShot(_spawnSound);
     }
 
+    private void SpawnLandParticle()
+    {
+        DetectColor();
+
+        GameObject landParticle = Instantiate(_landParticle, transform.position + new Vector3(0f, -1.75f, 0f), _landParticle.transform.rotation);
+
+        ParticleSystem ps = landParticle.GetComponent<ParticleSystem>();
+        SetColor(ps);
+        ps.Play();
+
+        Destroy(landParticle, 1.0f);
+    }
+
+    private void SpawnJumparticle()
+    {
+        DetectColor();
+
+        GameObject jumpParticle = Instantiate(_jumpParticle, transform.position + new Vector3(0f, -1.75f, 0f), _jumpParticle.transform.rotation);
+
+        ParticleSystem ps = jumpParticle.GetComponent<ParticleSystem>();
+        SetColor(ps);
+        ps.Play();
+
+        Destroy(jumpParticle, 1.0f);
+    }
+
+    private void DetectColor()
+    {
+        switch (colorBelow)
+        {
+            case ColorCode.Red:
+                var color = _redColor;
+                _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
+                break;
+            
+            case ColorCode.Green:
+                color = _greenColor;
+                _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
+                break;
+            
+            case ColorCode.Cyan:
+                color = _cyanColor;
+                _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
+                break;
+            
+            case ColorCode.Blue:
+                color = _blueColor;
+                _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
+                break;
+            
+            case ColorCode.Orange:
+                color = _orangeColor;
+                _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
+                break;
+            
+            case ColorCode.Yellow:
+                color = _yellowColor;
+                _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void SetColor(ParticleSystem ps)
+    {
+        var main = ps.main;
+        main.startColor = _currentParticleGradient;
+    }
+
     #endregion
 
     #region ColorHandling
 
-    public void ChangeColor(ColorCode _color)
+    private void ChangeColor(ColorCode _color)
     {
         colorBelow = _color;
     }
 
+    private void CheckForColor()
+    {
+        if (!IsGrounded()) return;
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, _downDistanceColor, _colorCellMask))
+        {
+            Debug.Log("Raycast hit: " + hit.transform.name); 
+            Debug.DrawLine(transform.position, hit.point, Color.red, 1.0f);
+
+
+            switch(hit.transform.gameObject.name)
+            {
+                case GREEN_TAG:
+                    ChangeColor(ColorCode.Green);
+                    break;
+
+                case CYAN_TAG:
+                    ChangeColor(ColorCode.Cyan);
+                    break;
+
+                case RED_TAG:
+                    ChangeColor(ColorCode.Red);
+                    break;
+
+                case BLUE_TAG:
+                    ChangeColor(ColorCode.Blue);
+                    break;
+
+                case YELLOW_TAG:
+                    ChangeColor(ColorCode.Yellow);
+                    break;
+                
+                case ORANGE_TAG:
+                    ChangeColor(ColorCode.Orange);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
     #endregion
     
+    #region Cached Properties
+
+    private const string GREEN_TAG = "Green";
+    private const string CYAN_TAG = "Cyan";
+    private const string RED_TAG = "Red";
+    private const string BLUE_TAG = "Blue";
+    private const string YELLOW_TAG = "Yellow";
+    private const string ORANGE_TAG = "Orange";
+
+    #endregion
 }  
