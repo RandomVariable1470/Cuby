@@ -817,8 +817,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _jumpParticle: {fileID: 1463826807437304922, guid: 3ec9bab7eff8b7f478c99782148a269f,
-    type: 3}
+  _jumpParticle:
+  - {fileID: 1060593315540875457, guid: 3ce22b6dd527814458b6aa301a1ff81b, type: 3}
+  - {fileID: 4186367470612733478, guid: 3ec9bab7eff8b7f478c99782148a269f, type: 3}
   _landParticle: {fileID: 2672528815526053495, guid: a745e1b9418fe5143a9f662bcc0e4d32,
     type: 3}
   _leftOffset: {x: -6, y: 0, z: 0}

@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     [Space(2)]
     [SerializeField] private AnimationCurve _bounceCurve;
     [Space(2)]
-    [SerializeField] private GameObject _jumpParticle;
+    [SerializeField] private GameObject[] _jumpParticle;
     [SerializeField] private GameObject _landParticle;
 
     [Space(5)]
@@ -403,7 +403,9 @@ public class Player : MonoBehaviour
         GameObject landParticle = Instantiate(_landParticle, transform.position + new Vector3(0f, -1.75f, 0f), _landParticle.transform.rotation);
 
         ParticleSystem ps = landParticle.GetComponent<ParticleSystem>();
+
         SetColor(ps);
+
         ps.Play();
 
         Destroy(landParticle, 1.0f);
@@ -413,13 +415,17 @@ public class Player : MonoBehaviour
     {
         DetectColor();
 
-        GameObject jumpParticle = Instantiate(_jumpParticle, transform.position + new Vector3(0f, -1.75f, 0f), _jumpParticle.transform.rotation);
+        foreach(GameObject ps in _jumpParticle)
+        {
+            GameObject _ps = Instantiate(ps, transform.position + new Vector3(0f, -1.75f, 0f), ps.transform.rotation);
 
-        ParticleSystem ps = jumpParticle.GetComponent<ParticleSystem>();
-        SetColor(ps);
-        ps.Play();
+            ParticleSystem particleSystem = _ps.GetComponent<ParticleSystem>();
+            particleSystem.Play();
 
-        Destroy(jumpParticle, 1.0f);
+            SetColor(particleSystem);
+
+            Destroy(_ps, 1.0f);
+        }
     }
 
     private void DetectColor()
@@ -483,10 +489,6 @@ public class Player : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit, _downDistanceColor, _colorCellMask))
         {
-            Debug.Log("Raycast hit: " + hit.transform.name); 
-            Debug.DrawLine(transform.position, hit.point, Color.red, 1.0f);
-
-
             switch(hit.transform.gameObject.name)
             {
                 case GREEN_TAG:
