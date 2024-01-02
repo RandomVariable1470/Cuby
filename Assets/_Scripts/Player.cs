@@ -17,7 +17,6 @@ public class Player : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float _moveSpeed = 10f;
-    [SerializeField] private float _jumpHeight = 2f;
     [SerializeField] private float _range = 10f;
     [SerializeField] private float _groundCheck;
 
@@ -25,8 +24,6 @@ public class Player : MonoBehaviour
     [Header("Audio & Effects")]
     [SerializeField] private AudioClip _spawnSound;
     [SerializeField] private AudioClip _swipSound;
-    [Space(2)]
-    [SerializeField] private AnimationCurve _bounceCurve;
     [Space(2)]
     [SerializeField] private GameObject[] _jumpParticle;
     [SerializeField] private GameObject _landParticle;
@@ -74,7 +71,7 @@ public class Player : MonoBehaviour
     private bool _isRotating = false;
     private bool _wasMoving;
     private bool _canSwipe = true;
-    private float _swipeCooldownTime = 0.1f;
+    private float _swipeCooldownTime = 0.65f;
     private float _swipeCooldownTimer = 0f;
 
     private Quaternion _targetRotation;
@@ -122,7 +119,7 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    #region Movement Handling
+    #region Movement Handling & Raycast Work
 
     private bool IsGrounded()
     {
@@ -139,65 +136,27 @@ public class Player : MonoBehaviour
 
     private void RaycastWork()
     {
-        RaycastHit hitLeft, hitRight, hitBack, hitFront;
-        
-        bool leftHit = Physics.Raycast(transform.position + _leftOffset, Vector3.down, out hitLeft, _range, _gridCellLayerMask);
-        bool rightHit = Physics.Raycast(transform.position + _rightOffset, Vector3.down, out hitRight, _range, _gridCellLayerMask);
-        bool backHit = Physics.Raycast(transform.position + _backOffset, Vector3.down, out hitBack, _range, _gridCellLayerMask);
-        bool frontHit = Physics.Raycast(transform.position + _frontOffset, Vector3.down , out hitFront, _range, _gridCellLayerMask);
-        
-        if (leftHit)
-        {
-            _gridCellLeft = hitLeft.transform.gameObject.GetComponent<GridCell>();
-        }
-        else
-        {
-            _gridCellLeft = null;
-        }
-        if (rightHit)
-        {
-            _gridCellRight = hitRight.transform.gameObject.GetComponent<GridCell>();
-        }
-        else
-        {
-            _gridCellRight = null;
-        }
-        if (backHit)
-        {
-            _gridCellBack = hitBack.transform.gameObject.GetComponent<GridCell>();
-        }
-        else
-        {
-            _gridCellBack = null;
-        }
-        if (frontHit)
-        {
-            _gridCellFront = hitFront.transform.gameObject.GetComponent<GridCell>();
-        }
-        else
-        {
-            _gridCellFront = null;
-        }
+        RaycastHit hit;
+
+        bool hitLeft = Physics.Raycast(transform.position + _leftOffset, Vector3.down, out hit, _range, _gridCellLayerMask);
+        _gridCellLeft = hitLeft ? hit.transform.gameObject.GetComponent<GridCell>() : null;
+
+        bool hitRight = Physics.Raycast(transform.position + _rightOffset, Vector3.down, out hit, _range, _gridCellLayerMask);
+        _gridCellRight = hitRight ? hit.transform.gameObject.GetComponent<GridCell>() : null;
+
+        bool hitBack = Physics.Raycast(transform.position + _backOffset, Vector3.down, out hit, _range, _gridCellLayerMask);
+        _gridCellBack = hitBack ? hit.transform.gameObject.GetComponent<GridCell>() : null;
+
+        bool hitFront = Physics.Raycast(transform.position + _frontOffset, Vector3.down, out hit, _range, _gridCellLayerMask);
+        _gridCellFront = hitFront ? hit.transform.gameObject.GetComponent<GridCell>() : null;
     }
 
     private void AssignCellPoints()
     {
-        if (_gridCellLeft != null)
-        {
-            _leftCellPoint = _gridCellLeft.SpawnPoint.transform;
-        }
-        if (_gridCellRight != null)
-        {
-            _rightCellPoint = _gridCellRight.SpawnPoint.transform;
-        }
-        if (_gridCellFront != null)
-        {
-            _frontCellPoint = _gridCellFront.SpawnPoint.transform;
-        }
-        if (_gridCellBack != null)
-        {
-            _backCellPoint = _gridCellBack.SpawnPoint.transform;
-        }
+        _leftCellPoint = _gridCellLeft?.JumpPoint?.transform;
+        _rightCellPoint = _gridCellRight?.JumpPoint?.transform;
+        _frontCellPoint = _gridCellFront?.JumpPoint?.transform;
+        _backCellPoint = _gridCellBack?.JumpPoint?.transform;
     }
 
     private void MakePlayerJumpToCell(Transform cell)
@@ -214,39 +173,23 @@ public class Player : MonoBehaviour
         _isMoving = true;
 
         Vector3 initialPosition = transform.position;
-
-        float jumpHeight = _jumpHeight;
-        float jumpDuration = Mathf.Sqrt(2f * jumpHeight / _gravity);
-
         float distance = Vector3.Distance(initialPosition, targetPosition);
         float moveDuration = distance / _moveSpeed;
 
-        float duration = Mathf.Max(jumpDuration, moveDuration);
         float elapsedTime = 0f;
 
-        Vector3 jumpVelocity = Vector3.up * Mathf.Sqrt(2f * _gravity * jumpHeight);
-
-        while (elapsedTime < duration)
+        while (elapsedTime < moveDuration)
         {
             elapsedTime += Time.deltaTime;
-
-            float t = Mathf.Clamp01(elapsedTime / duration);
+            float t = Mathf.Clamp01(elapsedTime / moveDuration);
 
             Vector3 newPos = Vector3.Lerp(initialPosition, targetPosition, t);
-
-            if (elapsedTime < jumpDuration)
-            {
-                float yOffset = jumpVelocity.y * elapsedTime - 0.5f * _gravity * elapsedTime * elapsedTime;
-                newPos.y = initialPosition.y + yOffset;
-            }
-
             transform.position = newPos;
 
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForFixedUpdate();
         }
 
         transform.position = targetPosition;
-
         _isMoving = false;
     }
 
@@ -339,7 +282,7 @@ public class Player : MonoBehaviour
         Quaternion previousTarget = transform.rotation;
 
         float elapsedTime = 0f;
-        float rotationDuration = 0.3f;
+        float rotationDuration = 0.35f;
 
         while (elapsedTime < rotationDuration)
         {

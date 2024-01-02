@@ -18,6 +18,7 @@ public class GridCell : MonoBehaviour
     [field:Space(10)]
     [field:Header("References")]
     [field:SerializeField] public GameObject SpawnPoint { get; private set; }
+    [field:SerializeField] public GameObject JumpPoint { get; private set; }
 
     private int posX;
     private int posY;

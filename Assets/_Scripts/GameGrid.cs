@@ -130,7 +130,6 @@ public class GameGrid : Singleton<GameGrid>
             GridCell gridCell = cellObject.GetComponent<GridCell>();
 
             Instantiate(_playerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
-            
         }
         else
         {
