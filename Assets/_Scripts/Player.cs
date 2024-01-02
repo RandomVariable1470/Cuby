@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Threading.Tasks;
 using GG.Infrastructure.Utils.Swipe;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public enum ColorCode
 {
@@ -79,9 +79,9 @@ public class Player : MonoBehaviour
 
     private Quaternion _targetRotation;
     private AudioSource _audioSource;
+    private Rigidbody _rb;
     private CinemachineShake _shake;
     private ParticleSystem.MinMaxGradient _currentParticleGradient;
-    private float verticalVelocity = 0f;
 
     #region Initilization
 
@@ -92,6 +92,7 @@ public class Player : MonoBehaviour
 
     private void Start() 
     {
+        _rb = GetComponent<Rigidbody>();
         _audioSource = GetComponent<AudioSource>();
         _shake = CinemachineShake.Instance;
     }
@@ -112,7 +113,6 @@ public class Player : MonoBehaviour
         AssignCellPoints();
         SwipeEffects();
         SwipeCounter();
-        CheckForColor();
     }
 
     private void FixedUpdate() 
@@ -133,26 +133,9 @@ public class Player : MonoBehaviour
     {
         if (!IsGrounded())
         {
-            verticalVelocity -= _gravity * Time.deltaTime;
-
-            Vector3 newPosition = transform.position;
-            newPosition.y += verticalVelocity * Time.deltaTime;
-
-            if (newPosition.y < 0f)
-            {
-                newPosition.y = 0f;
-                verticalVelocity = 0f;
-            }
-
-            transform.position = newPosition;
-        }
-        else
-        {
-            verticalVelocity = 0f;
+            _rb.AddForce(_gravity * Vector3.down * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
     }
-
-
 
     private void RaycastWork()
     {
@@ -259,7 +242,7 @@ public class Player : MonoBehaviour
 
             transform.position = newPos;
 
-            yield return new WaitForFixedUpdate();
+            yield return new WaitForEndOfFrame();
         }
 
         transform.position = targetPosition;
@@ -482,42 +465,31 @@ public class Player : MonoBehaviour
         colorBelow = _color;
     }
 
-    private void CheckForColor()
+    public void ChangeColor(string name)
     {
-        if (!IsGrounded()) return;
-
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, _downDistanceColor, _colorCellMask))
+        switch(name)
         {
-            switch(hit.transform.gameObject.name)
-            {
-                case GREEN_TAG:
-                    ChangeColor(ColorCode.Green);
-                    break;
-
-                case CYAN_TAG:
-                    ChangeColor(ColorCode.Cyan);
-                    break;
-
-                case RED_TAG:
-                    ChangeColor(ColorCode.Red);
-                    break;
-
-                case BLUE_TAG:
-                    ChangeColor(ColorCode.Blue);
-                    break;
-
-                case YELLOW_TAG:
-                    ChangeColor(ColorCode.Yellow);
-                    break;
-                
-                case ORANGE_TAG:
-                    ChangeColor(ColorCode.Orange);
-                    break;
-
-                default:
-                    break;
-            }
+            case GREEN_TAG:
+                ChangeColor(ColorCode.Green);
+                break;
+            case CYAN_TAG:
+                ChangeColor(ColorCode.Cyan);
+                break;
+            case RED_TAG:
+                ChangeColor(ColorCode.Red);
+                break;
+            case BLUE_TAG:
+                ChangeColor(ColorCode.Blue);
+                break;
+            case YELLOW_TAG:
+                ChangeColor(ColorCode.Yellow);
+                break;
+            
+            case ORANGE_TAG:
+                ChangeColor(ColorCode.Orange);
+                break;
+            default:
+                break;
         }
     }
 

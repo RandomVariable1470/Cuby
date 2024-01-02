@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
@@ -98,7 +98,8 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 606b596adf4f515499ef22888c60dbf5,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -463,7 +464,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -1236,7 +1237,7 @@ GameObject:
   - component: {fileID: 1269511789}
   - component: {fileID: 1269511790}
   m_Layer: 0
-  m_Name: FpsDisplay
+  m_Name: UIManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1269,7 +1270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b8d93b07141f7d4a868eccd79295087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FpsText: {fileID: 1261181702}
+  _fpsText: {fileID: 1261181702}
 --- !u!1 &1587156116
 GameObject:
   m_ObjectHideFlags: 0

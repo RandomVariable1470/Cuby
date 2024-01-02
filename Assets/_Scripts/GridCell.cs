@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridCell : MonoBehaviour
@@ -23,11 +24,11 @@ public class GridCell : MonoBehaviour
 
     private Vector3 initialPosition;
     private int columnId;
+    private float offset;
 
     private void Start()
     {
         initialPosition = transform.position;
-        StartCoroutine(IdleFloatingAnimation());
     }
 
     public void SetColumn(int column)
@@ -35,23 +36,21 @@ public class GridCell : MonoBehaviour
         columnId = column;
     }
 
-    private IEnumerator IdleFloatingAnimation()
+    private void Update() 
     {
-        float offset = 0f;
+        WaveAnimation();
+    }
 
-        while (true)
-        {
-            float phase = columnId * wavePhaseMultiplier + (posX + posY) * 0.1f;
-            float sineWave = Mathf.Sin((Time.time + phase) * floatSpeed);
-            float yOffset = sineWave * floatMagnitude;
+    private void WaveAnimation()
+    {
+        float phase = columnId * wavePhaseMultiplier + (posX + posY) * 0.1f;
+        float sineWave = Mathf.Sin((Time.time + phase) * floatSpeed);
+        float yOffset = sineWave * floatMagnitude;
 
-            offset = Mathf.Lerp(offset, yOffset, Time.deltaTime * floatSpeed * 0.5f);
+        offset = Mathf.Lerp(offset, yOffset, Time.deltaTime * floatSpeed * 0.5f);
 
-            Vector3 newPosition = initialPosition + new Vector3(0, offset, 0);
-            transform.position = newPosition;
-
-            yield return new WaitForFixedUpdate();
-        }
+        Vector3 newPosition = initialPosition + new Vector3(0, offset, 0);
+        transform.position = newPosition;
     }
 
     public void SetPosition(int x, int y)
