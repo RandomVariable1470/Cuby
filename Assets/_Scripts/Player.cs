@@ -10,7 +10,8 @@ public enum ColorCode
     Blue,
     Yellow,
     Cyan,
-    Orange
+    Orange,
+    None
 }
 
 public class Player : MonoBehaviour
@@ -51,21 +52,13 @@ public class Player : MonoBehaviour
     [Space(5)]
     [SerializeField] private float _downDistanceColor;
     [SerializeField] private LayerMask _colorCellMask;
-    public ColorCode colorBelow;
 
     //Private Variables
-
     private SwipeListener swipeListener;
 
-    private GridCell _gridCellRight;
-    private GridCell _gridCellLeft;
-    private GridCell _gridCellBack;
-    private GridCell _gridCellFront;
+    private GridCell _gridCellRight, _gridCellLeft, _gridCellBack, _gridCellFront;
 
-    private Transform _rightCellPoint;
-    private Transform _leftCellPoint;
-    private Transform _backCellPoint;
-    private Transform _frontCellPoint;
+    private Transform _rightCellPoint, _leftCellPoint, _backCellPoint, _frontCellPoint;
 
     private bool _isMoving = false;
     private bool _isRotating = false;
@@ -77,7 +70,7 @@ public class Player : MonoBehaviour
     private Quaternion _targetRotation;
     private AudioSource _audioSource;
     private Rigidbody _rb;
-    private CinemachineShake _shake;
+    private GameManager _gameManager;
     private ParticleSystem.MinMaxGradient _currentParticleGradient;
 
     #region Initilization
@@ -91,7 +84,7 @@ public class Player : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         _audioSource = GetComponent<AudioSource>();
-        _shake = CinemachineShake.Instance;
+        _gameManager = GameManager.Instance;
     }
 
     private void OnEnable()
@@ -199,7 +192,7 @@ public class Player : MonoBehaviour
 
     private void OnSwipe(string swipe)
     {
-        if (!_canSwipe || !IsGrounded()) return;
+        if (!_canSwipe || !IsGrounded() || _gameManager.HasCompleted) return;
 
         _canSwipe = false;
         _swipeCooldownTimer = 0f; 
@@ -311,8 +304,6 @@ public class Player : MonoBehaviour
             _audioSource.PlayOneShot(_swipSound);
 
             _wasMoving = false;
-
-            _shake.ShakeCamera(1f, 0.1f);
             Invoke(nameof(SpawnLandParticle), 0.1f);
         }
     }
@@ -356,7 +347,7 @@ public class Player : MonoBehaviour
 
     private void DetectColor()
     {
-        switch (colorBelow)
+        switch (_gameManager.ColorCode)
         {
             case ColorCode.Red:
                 var color = _redColor;
@@ -403,33 +394,28 @@ public class Player : MonoBehaviour
 
     #region ColorHandling
 
-    private void ChangeColor(ColorCode _color)
-    {
-        colorBelow = _color;
-    }
-
     public void ChangeColor(string name)
     {
         switch(name)
         {
             case GREEN_TAG:
-                ChangeColor(ColorCode.Green);
+                _gameManager.ChangeColor(ColorCode.Green);
                 break;
             case CYAN_TAG:
-                ChangeColor(ColorCode.Cyan);
+                _gameManager.ChangeColor(ColorCode.Cyan);
                 break;
             case RED_TAG:
-                ChangeColor(ColorCode.Red);
+                _gameManager.ChangeColor(ColorCode.Red);
                 break;
             case BLUE_TAG:
-                ChangeColor(ColorCode.Blue);
+                _gameManager.ChangeColor(ColorCode.Blue);
                 break;
             case YELLOW_TAG:
-                ChangeColor(ColorCode.Yellow);
+                _gameManager.ChangeColor(ColorCode.Yellow);
                 break;
             
             case ORANGE_TAG:
-                ChangeColor(ColorCode.Orange);
+                _gameManager.ChangeColor(ColorCode.Orange);
                 break;
             default:
                 break;

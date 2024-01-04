@@ -3,15 +3,22 @@ using TMPro;
  
 public class UIManager : MonoBehaviour 
 {
+
+	[Header("FpsCounter")]
 	[SerializeField] private TextMeshProUGUI _fpsText;
-	
 	private float _pollingTime = 1f;
 	private float _time;
 	private int _frameCount;
 
+	[Header("Pop Up For Cell Color")]
+	[SerializeField] private GameObject _popCellColor;
+
 	private void Update() 
 	{
-		FpsCounter();
+		if (_fpsText != null)
+		{
+			FpsCounter();
+		}
 	}
 
 	private void FpsCounter()
@@ -28,5 +35,10 @@ public class UIManager : MonoBehaviour
 			_time -= _pollingTime;
 			_frameCount = 0;
 		}
+	}
+
+	public void PopUpColorCode()
+	{
+		
 	}
 }

@@ -2,13 +2,14 @@ using System.Collections;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GridCell : MonoBehaviour
 {
     [Header("Floating Animation")]
-    [SerializeField] private float floatMagnitude = 0.5f;
-    [SerializeField] private float floatSpeed = 1.75f;
-    [SerializeField] private float wavePhaseMultiplier = 0.5f;
+    [SerializeField] private float _floatMagnitude = 0.5f;
+    [SerializeField] private float _floatSpeed = 1.75f;
+    [SerializeField] private float _wavePhaseMultiplier = 0.5f;
 
     [field:Space(10)]
     [field:Header("Occupancy Status")]
@@ -19,50 +20,76 @@ public class GridCell : MonoBehaviour
     [field:Header("References")]
     [field:SerializeField] public GameObject SpawnPoint { get; private set; }
     [field:SerializeField] public GameObject JumpPoint { get; private set; }
+    [SerializeField] private UnityEvent _shakeEvent;
+    [SerializeField] private AudioClip _destroyClip;
 
-    private int posX;
-    private int posY;
+    [HideInInspector] public bool SelectedCell {get; set;}
 
-    private Vector3 initialPosition;
-    private int columnId;
-    private float offset;
+    private int _posX;
+    private int _posY;
+
+    private Vector3 _initialPosition;
+    private int _columnId;
+    private float _offset;
+
+    private GameManager _manager;
+    private AudioSource _audioSource;
+    private Animator _anim;
+    private Rigidbody _rb;
 
     private void Start()
     {
-        initialPosition = transform.position;
+        _initialPosition = transform.position;
+        _manager = GameManager.Instance;
+        _rb = GetComponent<Rigidbody>();
+        _anim = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     public void SetColumn(int column)
     {
-        columnId = column;
+        _columnId = column;
     }
 
     private void Update() 
     {
-        WaveAnimation();
+        if (!_manager.HasCompleted) WaveAnimation();
     }
 
     private void WaveAnimation()
     {
-        float phase = columnId * wavePhaseMultiplier + (posX + posY) * 0.1f;
-        float sineWave = Mathf.Sin((Time.time + phase) * floatSpeed);
-        float yOffset = sineWave * floatMagnitude;
+        float phase = _columnId * _wavePhaseMultiplier + (_posX + _posY) * 0.1f;
+        float sineWave = Mathf.Sin((Time.time + phase) * _floatSpeed);
+        float yOffset = sineWave * _floatMagnitude;
 
-        offset = Mathf.Lerp(offset, yOffset, Time.deltaTime * floatSpeed * 0.5f);
+        _offset = Mathf.Lerp(_offset, yOffset, Time.deltaTime * _floatSpeed * 0.5f);
 
-        Vector3 newPosition = initialPosition + new Vector3(0, offset, 0);
+        Vector3 newPosition = _initialPosition + new Vector3(0, _offset, 0);
         transform.position = newPosition;
+    }
+
+    public void MakeMeFall(float _fallSpeed)
+    {
+        _anim.CrossFade("Destroy", 0f);
+        _rb.isKinematic = false;
+        _rb.AddForce(_fallSpeed * Vector3.down * Time.deltaTime, ForceMode.Impulse);
     }
 
     public void SetPosition(int x, int y)
     {
-        posX = x;
-        posY = y;
+        _posX = x;
+        _posY = y;
     }
 
     public Vector2Int GetPosition()
     {
-        return new Vector2Int(posX, posY);
+        return new Vector2Int(_posX, _posY);
+    }
+
+    public void PlayDestorySound()
+    {
+        _audioSource.PlayOneShot(_destroyClip);
+        _shakeEvent.Invoke();
     }
 
     private void OnCollisionEnter(Collision other)
@@ -72,7 +99,19 @@ public class GridCell : MonoBehaviour
             IsOccupied = true;
             ObjectInThisGridSpace = other.gameObject;
         }
-        else
+    }
+
+    private void OnCollisionStay(Collision other) 
+    {
+        if (other.gameObject != null && other.gameObject.layer != 6 && SelectedCell)
+        {
+            _manager.CheckForLevelCompletion();
+        }
+    }
+
+    private void OnCollisionExit(Collision other) 
+    {
+        if (other.gameObject != null && other.gameObject.layer != 6)
         {
             IsOccupied = false;
             ObjectInThisGridSpace = null;
