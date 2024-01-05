@@ -20,7 +20,6 @@ public class GridCell : MonoBehaviour
     [field:Header("References")]
     [field:SerializeField] public GameObject SpawnPoint { get; private set; }
     [field:SerializeField] public GameObject JumpPoint { get; private set; }
-    [SerializeField] private UnityEvent _shakeEvent;
     [SerializeField] private AudioClip _destroyClip;
 
     [HideInInspector] public bool SelectedCell {get; set;}
@@ -89,7 +88,6 @@ public class GridCell : MonoBehaviour
     public void PlayDestorySound()
     {
         _audioSource.PlayOneShot(_destroyClip);
-        _shakeEvent.Invoke();
     }
 
     private void OnCollisionEnter(Collision other)

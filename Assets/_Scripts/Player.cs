@@ -1,7 +1,7 @@
 using System.Collections;
+using DG.Tweening;
 using GG.Infrastructure.Utils.Swipe;
 using UnityEngine;
-using UnityEngine.Pool;
 
 public enum ColorCode
 {
@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
     private bool _isRotating = false;
     private bool _wasMoving;
     private bool _canSwipe = true;
-    private float _swipeCooldownTime = 0.65f;
+    private float _swipeCooldownTime = 0.3f;
     private float _swipeCooldownTimer = 0f;
 
     private Quaternion _targetRotation;
@@ -85,6 +85,7 @@ public class Player : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _audioSource = GetComponent<AudioSource>();
         _gameManager = GameManager.Instance;
+        OnStartEffect();
     }
 
     private void OnEnable()
@@ -343,6 +344,15 @@ public class Player : MonoBehaviour
 
             Destroy(_ps, 1.0f);
         }
+    }
+
+    private void OnStartEffect()
+    {
+        transform.DOScale(new Vector3(3f,3f,3f), 0.2f).SetEase(Ease.InBounce).OnComplete(() =>
+        {
+            transform.DOScale(transform.localScale * 1.0325f, 0.5f).SetEase(Ease.InOutSine).SetLoops(-1,LoopType.Yoyo);
+        }
+        );
     }
 
     private void DetectColor()

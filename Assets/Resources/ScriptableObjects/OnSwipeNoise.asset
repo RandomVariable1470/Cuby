@@ -28,37 +28,37 @@ MonoBehaviour:
   OrientationNoise:
   - X:
       Frequency: 3
-      Amplitude: 0.01
+      Amplitude: 0.005
       Constant: 0
     Y:
-      Frequency: 2
-      Amplitude: 0.65
+      Frequency: 6
+      Amplitude: 0.1625
       Constant: 0
     Z:
       Frequency: 3
-      Amplitude: 0.01
+      Amplitude: 0.005
       Constant: 0
   - X:
       Frequency: 7
-      Amplitude: 0.3
+      Amplitude: 0.15
       Constant: 0
     Y:
-      Frequency: 5
-      Amplitude: 0.55
+      Frequency: 10
+      Amplitude: 0.1375
       Constant: 0
     Z:
       Frequency: 7
-      Amplitude: 0.45
+      Amplitude: 0.225
       Constant: 0
   - X:
       Frequency: 0
       Amplitude: 0
       Constant: 0
     Y:
-      Frequency: 40
-      Amplitude: 0.75
+      Frequency: 60
+      Amplitude: 0.1875
       Constant: 0
     Z:
       Frequency: 2
-      Amplitude: 0.02
+      Amplitude: 0.01
       Constant: 0

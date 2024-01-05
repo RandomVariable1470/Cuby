@@ -129,7 +129,7 @@ public class GameGrid : Singleton<GameGrid>
                 if (_cell != null && _cell != _gameManager._selectedCell)
                 {
                     _cell.MakeMeFall(_fallingSpeed);
-                    yield return new WaitForSeconds(0.05f);
+                    yield return new WaitForSeconds(0.03f);
                     yield return new WaitForSeconds(_delayFalling);
                 }
             }

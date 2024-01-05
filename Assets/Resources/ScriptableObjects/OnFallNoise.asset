@@ -15,50 +15,50 @@ MonoBehaviour:
   PositionNoise:
   - X:
       Frequency: 0.25
-      Amplitude: 0.05
+      Amplitude: 0.0125
       Constant: 0
     Y:
       Frequency: 0.45
-      Amplitude: 0.05
+      Amplitude: 0.025
       Constant: 0
     Z:
       Frequency: 2.5
-      Amplitude: 0.025
+      Amplitude: 0.0125
       Constant: 0
   - X:
       Frequency: 0.65
-      Amplitude: 0.025
+      Amplitude: 0.00625
       Constant: 0
     Y:
       Frequency: 2.25
-      Amplitude: 0.05
+      Amplitude: 0.025
       Constant: 0
     Z:
       Frequency: 0.75
-      Amplitude: 0.075
+      Amplitude: 0.0375
       Constant: 0
   - X:
       Frequency: 1.25
-      Amplitude: 0.005
+      Amplitude: 0.00125
       Constant: 0
     Y:
       Frequency: 15.3
-      Amplitude: 0.175
+      Amplitude: 0.04375
       Constant: 0
     Z:
       Frequency: 7.5
-      Amplitude: 0.175
+      Amplitude: 0.04375
       Constant: 0
   OrientationNoise:
   - X:
       Frequency: 1.65
-      Amplitude: 0.025
+      Amplitude: 0.00625
       Constant: 0
     Y:
       Frequency: 1.25
-      Amplitude: 0.045
+      Amplitude: 0.01125
       Constant: 0
     Z:
       Frequency: 0.35
-      Amplitude: 0.0075
+      Amplitude: 0.00375
       Constant: 0

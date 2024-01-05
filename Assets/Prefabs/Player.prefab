@@ -609,7 +609,6 @@ GameObject:
   - component: {fileID: 2066323373302194964}
   - component: {fileID: 4884265699183355389}
   - component: {fileID: -3813636265695764533}
-  - component: {fileID: 4114170556563657839}
   - component: {fileID: 2260815903024331673}
   m_Layer: 3
   m_Name: Player
@@ -628,7 +627,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 8.54, y: 4.06, z: 2.5616746}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2220785264379021553}
@@ -750,53 +749,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 30
-  _jumpHeight: 0
   _range: 2
   _groundCheck: 2
   _spawnSound: {fileID: 8300000, guid: e0cc9fb8a66924ebba0018f428ff3c52, type: 3}
   _swipSound: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1, type: 3}
-  _bounceCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0.78664684
-      outSlope: 0.78664684
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.4242339
-      value: 0.33372226
-      inSlope: 1.1891673
-      outSlope: 1.1891673
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.10612229
-    - serializedVersion: 3
-      time: 0.6600588
-      value: 0.58030665
-      inSlope: 1.7704055
-      outSlope: 1.7704055
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.19573484
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.99871826
-      value: 1
-      inSlope: 1.6737324
-      outSlope: 1.6737324
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.054128647
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   _jumpParticle:
   - {fileID: 1060593315540875457, guid: 3ce22b6dd527814458b6aa301a1ff81b, type: 3}
   - {fileID: 4186367470612733478, guid: 3ec9bab7eff8b7f478c99782148a269f, type: 3}
@@ -820,28 +776,7 @@ MonoBehaviour:
   _colorCellMask:
     serializedVersion: 2
     m_Bits: 128
-  colorBelow: 5
---- !u!95 &4114170556563657839
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8187537117994103315}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6fe1fea2d08d0a84c9e63b8e24889ead, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  ease: 10
 --- !u!82 &2260815903024331673
 AudioSource:
   m_ObjectHideFlags: 0
