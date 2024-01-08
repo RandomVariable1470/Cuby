@@ -191,7 +191,7 @@ public class Player : MonoBehaviour
 
     private void OnSwipe(string swipe)
     {
-        if (!_canSwipe || !IsGrounded() || _gameManager.HasCompleted) return;
+        if (!_canSwipe || !IsGrounded() || _gameManager.HasCompletedGame) return;
 
         _canSwipe = false;
         _swipeCooldownTimer = 0f; 

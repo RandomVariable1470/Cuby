@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using TMPro;
- 
-public class UIManager : MonoBehaviour 
-{
+using System.Threading.Tasks;
 
+public class UIManager : Singleton<UIManager>
+{
 	[Header("FpsCounter")]
 	[SerializeField] private TextMeshProUGUI _fpsText;
 	private float _pollingTime = 1f;
@@ -12,6 +12,9 @@ public class UIManager : MonoBehaviour
 
 	[Header("Pop Up For Cell Color")]
 	[SerializeField] private GameObject _popCellColor;
+	[SerializeField] private TextMeshProUGUI _popCellColorText;
+	[SerializeField] private Animator _popCellColorAnimator;
+	private bool _hasInitilized;
 
 	private void Update() 
 	{
@@ -30,15 +33,46 @@ public class UIManager : MonoBehaviour
 		if (_time >= _pollingTime) 
 		{
 			int frameRate = Mathf.RoundToInt((float)_frameCount / _time);
-			_fpsText.text = frameRate.ToString() + " fps";
+			_fpsText.text = frameRate.ToString() + FPS_TAG;
 
 			_time -= _pollingTime;
 			_frameCount = 0;
 		}
 	}
 
-	public void PopUpColorCode()
+	public async void PopUpColorCode(int delayTime)
 	{
-		
+		if (!_hasInitilized)
+		{
+			_hasInitilized = true;
+			_popCellColor.SetActive(true);
+			_popCellColorAnimator.CrossFade(IN_TAG, 0f);
+
+			await Task.Delay(delayTime);
+
+			_popCellColorAnimator.CrossFade(OUT_TAG, 0f);
+
+			await Task.Delay(300);
+
+			_popCellColor.SetActive(false);
+		}
 	}
+
+	public void ChangePopColorCodeText(string text)
+	{
+		_popCellColorText.text = text;
+	}
+
+	public void ChangeHasInitilized()
+	{
+		_hasInitilized = false;
+	}
+
+	#region Cached Properties
+
+	private readonly string IN_TAG = "In";
+	private readonly string OUT_TAG = "Out";
+	private readonly string FPS_TAG = "FPS";
+
+	#endregion
 }

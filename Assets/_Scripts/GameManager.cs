@@ -8,16 +8,18 @@ public class GameManager : Singleton<GameManager>
     [field: SerializeField] public ColorCode ColorCode {get; private set;}
     [field: SerializeField] public ColorCode SelectedCellColorCode {get; private set;}
 
-    [HideInInspector] public bool HasCompleted {get; set;}
+    [HideInInspector] public bool HasCompletedGame {get; set;}
     [HideInInspector] public GridCell _selectedCell {get; set;}
 
     private GameGrid _gameGrid;
+    private UIManager _uiManager;
 
     #region Initilization
 
     private void Start() 
     {
         _gameGrid = GameGrid.Instance;
+        _uiManager = UIManager.Instance;
     }
 
     private void Update() 
@@ -41,9 +43,20 @@ public class GameManager : Singleton<GameManager>
     {
         if (ColorCode == SelectedCellColorCode)
         {
-            HasCompleted = true;
-            StartCoroutine(_gameGrid.DestroyGrid());
+            LevelCompletion();
         }
+        else
+        {
+            _uiManager.PopUpColorCode(1000);
+        }
+    }
+
+    private void LevelCompletion()
+    {
+        HasCompletedGame = true;
+        StartCoroutine(_gameGrid.DestroyGrid());
+        _uiManager.ChangePopColorCodeText("Correct Color");
+        _uiManager.PopUpColorCode(3000);
     }
 
     private void SetSelectedCell()

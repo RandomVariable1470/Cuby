@@ -32,6 +32,7 @@ public class GridCell : MonoBehaviour
     private float _offset;
 
     private GameManager _manager;
+    private UIManager _uiManager;
     private AudioSource _audioSource;
     private Animator _anim;
     private Rigidbody _rb;
@@ -40,6 +41,7 @@ public class GridCell : MonoBehaviour
     {
         _initialPosition = transform.position;
         _manager = GameManager.Instance;
+        _uiManager = UIManager.Instance;
         _rb = GetComponent<Rigidbody>();
         _anim = GetComponent<Animator>();
         _audioSource = GetComponent<AudioSource>();
@@ -52,7 +54,7 @@ public class GridCell : MonoBehaviour
 
     private void Update() 
     {
-        if (!_manager.HasCompleted) WaveAnimation();
+        if (!_manager.HasCompletedGame) WaveAnimation();
     }
 
     private void WaveAnimation()
@@ -113,6 +115,11 @@ public class GridCell : MonoBehaviour
         {
             IsOccupied = false;
             ObjectInThisGridSpace = null;
+
+            if (SelectedCell)
+            {
+                _uiManager.ChangeHasInitilized();
+            }
         }
     }
 }
