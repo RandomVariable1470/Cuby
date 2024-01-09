@@ -29,6 +29,7 @@ public class GameManager : Singleton<GameManager>
 
     #endregion
 
+
     public void ChangeColor(ColorCode _color)
     {
         ColorCode = _color;
@@ -56,7 +57,7 @@ public class GameManager : Singleton<GameManager>
         HasCompletedGame = true;
         StartCoroutine(_gameGrid.DestroyGrid());
         _uiManager.ChangePopColorCodeText("Correct Color");
-        _uiManager.PopUpColorCode(3000);
+        _uiManager.PopUpColorCode(2000);
     }
 
     private void SetSelectedCell()

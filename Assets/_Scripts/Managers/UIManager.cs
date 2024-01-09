@@ -16,6 +16,10 @@ public class UIManager : Singleton<UIManager>
 	[SerializeField] private Animator _popCellColorAnimator;
 	private bool _hasInitilized;
 
+	[Header("Pause Menu")]
+	[SerializeField] private GameObject _pauseMenu;
+	[SerializeField] private Animator _pauseMenuAnimator;
+
 	private void Update() 
 	{
 		if (_fpsText != null)
@@ -39,6 +43,8 @@ public class UIManager : Singleton<UIManager>
 			_frameCount = 0;
 		}
 	}
+
+	#region PopUp
 
 	public async void PopUpColorCode(int delayTime)
 	{
@@ -67,6 +73,17 @@ public class UIManager : Singleton<UIManager>
 	{
 		_hasInitilized = false;
 	}
+
+	#endregion
+
+	#region PauseMenu
+
+
+    #endregion
+
+    #region LevelCompletionMenu
+
+    #endregion
 
 	#region Cached Properties
 
