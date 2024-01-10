@@ -5,40 +5,14 @@ using System.Collections;
 
 public class GameGrid : Singleton<GameGrid>
 {
-    [Header("Grid Settings")]
-    [SerializeField] private GameObject _gridCellPrefab;
-    [field: SerializeField] public int Height {get; private set;}
-    [field: SerializeField] public int Width {get; private set;}
-    [SerializeField] private float _gridSpaceSize = 5;
-    [Space(5)]
-    [SerializeField] private int _xFinalCellCordinate;
-    [SerializeField] private int _yFinalCellCordinate;
-    [SerializeField] private Color _finalCellColor;
-    [field: SerializeField] public ColorCode SelectedCellColorCode {get; private set;}
-    [Space(5)]
-    [SerializeField] private GameObject _playerPrefab;
-    [SerializeField] private int _spawnCellXCordinate; 
-    [SerializeField] private int _spawnCellYCordinate;
+    [SerializeField] private GridScriptables _gridScriptableObject;
 
-    [Space(10)]
-    [Header("Creation Settings")]
-    [SerializeField] private float _initialDelay = 0.15f;
-    [SerializeField] private float _speedUpFactor = 0.0075f;
-    [field: SerializeField] public bool HasCompletedTheGrid { get; private set; }
-
-    [Space(10)]
-    [Header("Audio Settings")]
-    [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private AudioClip _createClip;
-    [Space(10)]
-    [Header("Falling Settings")]
-    [SerializeField] private float _fallingSpeed = 20f;
-    [SerializeField] private float _initialDelayFalling = 0.15f;
-    [SerializeField] private float _speedUpFactorFalling = 0.0075f;
-    [field: SerializeField] public bool HasCompletedFalling { get; private set; }
+    [field: SerializeField] public bool HasCompletedTheGrid;
+    [field: SerializeField] public bool HasCompletedFalling;
 
     // Private Variables
     private GameObject[,] _gameGrid;
+    private AudioSource _audioSource;
     private GameManager _gameManager;
     private ObjectPool<GameObject> _pool;
     private float _delay;
@@ -48,7 +22,7 @@ public class GameGrid : Singleton<GameGrid>
     {
         _pool = new ObjectPool<GameObject>(() => 
         {
-            return Instantiate(_gridCellPrefab);
+            return Instantiate(_gridScriptableObject.GridCellPrefab);
         }, gridCell =>
         {
             gridCell.gameObject.SetActive(true);
@@ -67,6 +41,7 @@ public class GameGrid : Singleton<GameGrid>
         {
             StartCoroutine(CreateGrid());
             _gameManager = GameManager.Instance;
+            _audioSource = GetComponent<AudioSource>();
         }
         catch (Exception e)
         {
@@ -76,21 +51,21 @@ public class GameGrid : Singleton<GameGrid>
 
     private IEnumerator CreateGrid()
     {
-        if (_gridCellPrefab == null)
+        if (_gridScriptableObject.GridCellPrefab == null)
         {
             throw new Exception("Grid Cell Prefab on the Game Grid has not been assigned");
         }
 
-        _gameGrid = new GameObject[Height, Width];
+        _gameGrid = new GameObject[_gridScriptableObject.Height, _gridScriptableObject.Width];
 
-        _delay = _initialDelay;
+        _delay = _gridScriptableObject.InitialDelay;
 
-        for (int y = 0; y < Height; y++)
+        for (int y = 0; y < _gridScriptableObject.Height; y++)
         {
-            for (int x = 0; x < Width; x++)
+            for (int x = 0; x < _gridScriptableObject.Width; x++)
             {
                 var newCell = _pool.Get();
-                newCell.transform.position = new Vector3(x * _gridSpaceSize, 0, y * _gridSpaceSize);
+                newCell.transform.position = new Vector3(x * _gridScriptableObject.GridSpaceSize, 0, y * _gridScriptableObject.GridSpaceSize);
                 newCell.transform.parent = transform;
                 newCell.name = $"Grid Space (X: {x}, Y: {y})";
 
@@ -98,41 +73,41 @@ public class GameGrid : Singleton<GameGrid>
                 gridCell.SetPosition(y, x);
                 gridCell.SetColumn(y);
 
-                if (_audioSource != null && _createClip != null)
+                if (_audioSource != null && _gridScriptableObject.CreateClip != null)
                 {
-                    _audioSource.PlayOneShot(_createClip);
+                    _audioSource.PlayOneShot(_gridScriptableObject.CreateClip);
                 }
 
                 _gameGrid[y, x] = newCell;
 
                 yield return new WaitForSeconds(_delay); 
-                _delay -= _speedUpFactor;
+                _delay -= _gridScriptableObject.SpeedUpFactor;
                 _delay = Mathf.Max(_delay, 0f);
             }
         }
 
         HasCompletedTheGrid = true;
-        ColorGridCell(_xFinalCellCordinate, _yFinalCellCordinate, _finalCellColor);
+        ColorGridCell(_gridScriptableObject.XFinalCellCoordinate, _gridScriptableObject.YFinalCellCoordinate, _gridScriptableObject.FinalCellColor);
         SpawnPlayer();
     }
 
     public IEnumerator DestroyGrid()
     {
-        _delayFalling = _initialDelayFalling;
+        _delayFalling = _gridScriptableObject.InitialDelayFalling;
 
-        for (int y = 0; y < Height; y++)
+        for (int y = 0; y < _gridScriptableObject.Height; y++)
         {
-            for (int x = 0; x < Width; x++)
+            for (int x = 0; x < _gridScriptableObject.Width; x++)
             {
                 GridCell _cell = _gameGrid[y, x].GetComponent<GridCell>();
 
                 if (_cell != null && _cell != _gameManager._selectedCell)
                 {
-                    _cell.MakeMeFall(_fallingSpeed);
+                    _cell.MakeMeFall(_gridScriptableObject.FallingSpeed);
                     yield return new WaitForSeconds(_delayFalling);
                 }
             }
-            _delayFalling -= _speedUpFactorFalling;
+            _delayFalling -= _gridScriptableObject.SpeedUpFactorFalling;
         }
 
         HasCompletedFalling = true;
@@ -144,7 +119,7 @@ public class GameGrid : Singleton<GameGrid>
         {
             GameObject cellToColor = _gameGrid[y, x];
             _gameManager._selectedCell = cellToColor.GetComponent<GridCell>();
-            _gameManager.ChangeSelectedCellColor(SelectedCellColorCode);
+            _gameManager.ChangeSelectedCellColor(_gridScriptableObject.SelectedCellColorCode);
             
             if (cellToColor != null)
             {
@@ -161,14 +136,16 @@ public class GameGrid : Singleton<GameGrid>
         }
     }
 
+
+
     private void SpawnPlayer()
     {
-        if (_spawnCellXCordinate >= 0 &&_spawnCellYCordinate >= 0 && _spawnCellXCordinate < Width &&_spawnCellYCordinate < Height)
+        if (_gridScriptableObject.SpawnCellXCoordinate >= 0 &&_gridScriptableObject.SpawnCellYCoordinate >= 0 && _gridScriptableObject.SpawnCellXCoordinate < _gridScriptableObject.Width &&_gridScriptableObject.SpawnCellYCoordinate < _gridScriptableObject.Height)
         {
-            GameObject cellObject = _gameGrid[_spawnCellYCordinate, _spawnCellXCordinate];
+            GameObject cellObject = _gameGrid[_gridScriptableObject.SpawnCellYCoordinate, _gridScriptableObject.SpawnCellXCoordinate];
             GridCell gridCell = cellObject.GetComponent<GridCell>();
 
-            Instantiate(_playerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
+            Instantiate(_gridScriptableObject.PlayerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
         }
         else
         {

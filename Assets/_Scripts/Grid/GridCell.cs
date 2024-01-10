@@ -6,21 +6,11 @@ using UnityEngine.Events;
 
 public class GridCell : MonoBehaviour
 {
-    [Header("Floating Animation")]
-    [SerializeField] private float _floatMagnitude = 0.5f;
-    [SerializeField] private float _floatSpeed = 1.75f;
-    [SerializeField] private float _wavePhaseMultiplier = 0.5f;
-
-    [field:Space(10)]
-    [field:Header("Occupancy Status")]
-    [field:SerializeField] public GameObject ObjectInThisGridSpace { get; private set; }
-    [field:SerializeField] public bool IsOccupied { get; private set; }
-
     [field:Space(10)]
     [field:Header("References")]
     [field:SerializeField] public GameObject SpawnPoint { get; private set; }
     [field:SerializeField] public GameObject JumpPoint { get; private set; }
-    [SerializeField] private AudioClip _destroyClip;
+    [SerializeField] private GridCellScriptables _gridCellScriptable;
 
     [HideInInspector] public bool SelectedCell {get; set;}
 
@@ -59,11 +49,11 @@ public class GridCell : MonoBehaviour
 
     private void WaveAnimation()
     {
-        float phase = _columnId * _wavePhaseMultiplier + (_posX + _posY) * 0.1f;
-        float sineWave = Mathf.Sin((Time.time + phase) * _floatSpeed);
-        float yOffset = sineWave * _floatMagnitude;
+        float phase = _columnId * _gridCellScriptable.WavePhaseMultiplier + (_posX + _posY) * 0.1f;
+        float sineWave = Mathf.Sin((Time.time + phase) * _gridCellScriptable.FloatMagnitude);
+        float yOffset = sineWave * _gridCellScriptable.FloatMagnitude;
 
-        _offset = Mathf.Lerp(_offset, yOffset, Time.deltaTime * _floatSpeed * 0.5f);
+        _offset = Mathf.Lerp(_offset, yOffset, Time.deltaTime * _gridCellScriptable.FloatSpeed * 0.5f);
 
         Vector3 newPosition = _initialPosition + new Vector3(0, _offset, 0);
         transform.position = newPosition;
@@ -71,7 +61,7 @@ public class GridCell : MonoBehaviour
 
     public void MakeMeFall(float _fallSpeed)
     {
-        _anim.CrossFade("Destroy", 0f);
+        _anim.CrossFade(DESTROY_TAG, 0f);
         _rb.isKinematic = false;
         _rb.AddForce(_fallSpeed * Vector3.down * Time.deltaTime, ForceMode.Impulse);
     }
@@ -89,16 +79,7 @@ public class GridCell : MonoBehaviour
 
     public void PlayDestorySound()
     {
-        _audioSource.PlayOneShot(_destroyClip);
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject != null && other.gameObject.layer != 6)
-        {
-            IsOccupied = true;
-            ObjectInThisGridSpace = other.gameObject;
-        }
+        _audioSource.PlayOneShot(_gridCellScriptable.DestroyClip);
     }
 
     private void OnCollisionStay(Collision other) 
@@ -111,15 +92,15 @@ public class GridCell : MonoBehaviour
 
     private void OnCollisionExit(Collision other) 
     {
-        if (other.gameObject != null && other.gameObject.layer != 6)
+        if (other.gameObject != null && other.gameObject.layer != 6 && SelectedCell)
         {
-            IsOccupied = false;
-            ObjectInThisGridSpace = null;
-
-            if (SelectedCell)
-            {
-                _uiManager.ChangeHasInitilized();
-            }
+            _uiManager.ChangeHasInitilized();
         }
     }
+
+    #region Cached Properteis
+
+    private readonly string DESTROY_TAG = "Destroy";
+
+    #endregion
 }

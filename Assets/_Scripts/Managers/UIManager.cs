@@ -17,8 +17,15 @@ public class UIManager : Singleton<UIManager>
 	private bool _hasInitilized;
 
 	[Header("Pause Menu")]
+	[SerializeField] private GameObject _pauseBtn;
 	[SerializeField] private GameObject _pauseMenu;
+	[SerializeField] private GameObject _pauseMenuMenu;
+	[SerializeField] private GameObject _pauseOptionMenu;
 	[SerializeField] private Animator _pauseMenuAnimator;
+	[SerializeField] private Animator _pauseMenuMenuAnimator;
+	[SerializeField] private Animator _pauseMenuOptionAnimator;
+
+	#region Initilization
 
 	private void Update() 
 	{
@@ -27,6 +34,10 @@ public class UIManager : Singleton<UIManager>
 			FpsCounter();
 		}
 	}
+
+	#endregion
+
+	#region Fps Counter
 
 	private void FpsCounter()
 	{
@@ -43,6 +54,8 @@ public class UIManager : Singleton<UIManager>
 			_frameCount = 0;
 		}
 	}
+
+	#endregion
 
 	#region PopUp
 
@@ -78,6 +91,47 @@ public class UIManager : Singleton<UIManager>
 
 	#region PauseMenu
 
+	public void TurnOnPauseMenu()
+	{
+		_pauseBtn.SetActive(false);
+		_pauseMenu.SetActive(true);
+		_pauseMenuAnimator.CrossFade(IN_TAG, 0f);
+	}
+
+	public async void TurnOffPauseMenu()
+	{
+		_pauseMenuAnimator.CrossFade(OUT_TAG, 0f);
+		await Task.Delay(500);
+		_pauseBtn.SetActive(true);
+		_pauseMenu.SetActive(false);
+	}
+
+	public async void TurnOnPauseOptionsMenu()
+	{
+		_pauseMenuMenuAnimator.CrossFade(OUT_TAG, 0f);
+		await Task.Delay(500);
+		_pauseMenuMenu.SetActive(false);
+		_pauseOptionMenu.SetActive(true);
+		_pauseMenuOptionAnimator.CrossFade(IN_TAG, 0f);
+	}
+
+	public async void TurnOffPauseOptionsMenu()
+	{
+		_pauseMenuOptionAnimator.CrossFade(OUT_TAG, 0f);
+		await Task.Delay(500);
+		_pauseOptionMenu.SetActive(false);
+		_pauseMenuMenu.SetActive(true);
+		_pauseMenuMenuAnimator.CrossFade(IN_TAG, 0f);
+		await Task.Delay(500);
+		_pauseMenuMenuAnimator.CrossFade(NEWSTATE_TAG, 0f);
+	}
+
+	public async void ExitScenePauseMenu(string name)
+	{
+		TurnOffPauseMenu();
+		await Task.Delay(500);
+		LevelManager.Instance.LevelLoad(name);
+	}
 
     #endregion
 
@@ -90,6 +144,7 @@ public class UIManager : Singleton<UIManager>
 	private readonly string IN_TAG = "In";
 	private readonly string OUT_TAG = "Out";
 	private readonly string FPS_TAG = "FPS";
+	private readonly string NEWSTATE_TAG = "New State";
 
 	#endregion
 }

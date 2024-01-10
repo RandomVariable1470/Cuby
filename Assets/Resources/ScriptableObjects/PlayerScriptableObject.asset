@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d7bf5f3e4748a24a8696501b8b5cd7b, type: 3}
+  m_Name: PlayerScriptableObject
+  m_EditorClassIdentifier: 
+  <MoveSpeed>k__BackingField: 30
+  <Range>k__BackingField: 2
+  <GroundCheck>k__BackingField: 2
+  <SpawnSound>k__BackingField: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1,
+    type: 3}
+  <SwipeSound>k__BackingField: {fileID: 8300000, guid: d78f4dbcb907f4a3380d2b8806852e36,
+    type: 3}
+  <JumpParticle>k__BackingField:
+  - {fileID: 4186367470612733478, guid: 3ec9bab7eff8b7f478c99782148a269f, type: 3}
+  - {fileID: 1060593315540875457, guid: 3ce22b6dd527814458b6aa301a1ff81b, type: 3}
+  <LandParticle>k__BackingField: {fileID: 2672528815526053495, guid: a745e1b9418fe5143a9f662bcc0e4d32,
+    type: 3}
+  <LeftOffset>k__BackingField: {x: -6, y: 0, z: 0}
+  <RightOffset>k__BackingField: {x: 6, y: 0, z: 0}
+  <BackOffset>k__BackingField: {x: 0, y: 0, z: 6}
+  <FrontOffset>k__BackingField: {x: 0, y: 0, z: -6}
+  <Gravity>k__BackingField: 40
+  <GridCellLayerMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 64
+  <RedColor>k__BackingField: {r: 0.8196079, g: 0.1764706, b: 0.19607845, a: 1}
+  <CyanColor>k__BackingField: {r: 0.18039216, g: 0.7960785, b: 0.87843144, a: 1}
+  <YellowColor>k__BackingField: {r: 0.9058824, g: 0.92549026, b: 0.34901962, a: 1}
+  <BlueColor>k__BackingField: {r: 0.20392159, g: 0.28235295, b: 0.89019614, a: 1}
+  <GreenColor>k__BackingField: {r: 0.30588236, g: 0.86666673, b: 0.18431373, a: 1}
+  <OrangeColor>k__BackingField: {r: 0.83921576, g: 0.4156863, b: 0.18431373, a: 1}

@@ -15,42 +15,7 @@ public enum ColorCode
 
 public class Player : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    [SerializeField] private float _moveSpeed = 10f;
-    [SerializeField] private float _range = 10f;
-    [SerializeField] private float _groundCheck;
-
-    [Space(5)]
-    [Header("Audio & Effects")]
-    [SerializeField] private AudioClip _spawnSound;
-    [SerializeField] private AudioClip _swipSound;
-    [Space(2)]
-    [SerializeField] private GameObject[] _jumpParticle;
-    [SerializeField] private GameObject _landParticle;
-
-    [Space(5)]
-    [Header("Offsets")]
-    [SerializeField] private Vector3 _leftOffset;
-    [SerializeField] private Vector3 _rightOffset;
-    [SerializeField] private Vector3 _backOffset;
-    [SerializeField] private Vector3 _frontOffset;
-
-    [Space(5)]
-    [Header("Ground Check and Physics")]
-    [SerializeField] private float _gravity = 40f;
-    [SerializeField] private LayerMask _gridCellLayerMask;
-
-    [Space(5)]
-    [Header("Color")]
-    [SerializeField] private Color _redColor;
-    [SerializeField] private Color _cyanColor;
-    [SerializeField] private Color _yellowColor;
-    [SerializeField] private Color _blueColor;
-    [SerializeField] private Color _greenColor;
-    [SerializeField] private Color _orangeColor;
-    [Space(5)]
-    [SerializeField] private float _downDistanceColor;
-    [SerializeField] private LayerMask _colorCellMask;
+    [SerializeField] private PlayerScriptable _player;
 
     //Private Variables
     private SwipeListener swipeListener;
@@ -115,14 +80,14 @@ public class Player : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, _groundCheck, _gridCellLayerMask);
+        return Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, _player.GroundCheck, _player.GridCellLayerMask);
     }
 
     private void ApplyExtraGravity()
     {
         if (!IsGrounded())
         {
-            _rb.AddForce(_gravity * Vector3.down * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            _rb.AddForce(_player.Gravity * Vector3.down * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
     }
 
@@ -130,16 +95,16 @@ public class Player : MonoBehaviour
     {
         RaycastHit hit;
 
-        bool hitLeft = Physics.Raycast(transform.position + _leftOffset, Vector3.down, out hit, _range, _gridCellLayerMask);
+        bool hitLeft = Physics.Raycast(transform.position + _player.LeftOffset, Vector3.down, out hit, _player.Range, _player.GridCellLayerMask);
         _gridCellLeft = hitLeft ? hit.transform.gameObject.GetComponent<GridCell>() : null;
 
-        bool hitRight = Physics.Raycast(transform.position + _rightOffset, Vector3.down, out hit, _range, _gridCellLayerMask);
+        bool hitRight = Physics.Raycast(transform.position + _player.RightOffset, Vector3.down, out hit, _player.Range, _player.GridCellLayerMask);
         _gridCellRight = hitRight ? hit.transform.gameObject.GetComponent<GridCell>() : null;
 
-        bool hitBack = Physics.Raycast(transform.position + _backOffset, Vector3.down, out hit, _range, _gridCellLayerMask);
+        bool hitBack = Physics.Raycast(transform.position + _player.BackOffset, Vector3.down, out hit, _player.Range, _player.GridCellLayerMask);
         _gridCellBack = hitBack ? hit.transform.gameObject.GetComponent<GridCell>() : null;
 
-        bool hitFront = Physics.Raycast(transform.position + _frontOffset, Vector3.down, out hit, _range, _gridCellLayerMask);
+        bool hitFront = Physics.Raycast(transform.position + _player.FrontOffset, Vector3.down, out hit, _player.Range, _player.GridCellLayerMask);
         _gridCellFront = hitFront ? hit.transform.gameObject.GetComponent<GridCell>() : null;
     }
 
@@ -166,7 +131,7 @@ public class Player : MonoBehaviour
 
         Vector3 initialPosition = transform.position;
         float distance = Vector3.Distance(initialPosition, targetPosition);
-        float moveDuration = distance / _moveSpeed;
+        float moveDuration = distance / _player.MoveSpeed;
 
         float elapsedTime = 0f;
 
@@ -300,7 +265,7 @@ public class Player : MonoBehaviour
     {
         if (_wasMoving && IsGrounded() && !_isMoving)
         {
-            _audioSource.PlayOneShot(_swipSound);
+            _audioSource.PlayOneShot(_player.SwipeSound);
 
             _wasMoving = false;
             Invoke(nameof(SpawnLandParticle), 0.1f);
@@ -309,14 +274,14 @@ public class Player : MonoBehaviour
 
     public void OnSpawnSound()
     {
-        _audioSource.PlayOneShot(_spawnSound);
+        _audioSource.PlayOneShot(_player.SpawnSound);
     }
 
     private void SpawnLandParticle()
     {
         DetectColor();
 
-        GameObject landParticle = Instantiate(_landParticle, transform.position + new Vector3(0f, -1.75f, 0f), _landParticle.transform.rotation);
+        GameObject landParticle = Instantiate(_player.LandParticle, transform.position + new Vector3(0f, -1.75f, 0f), _player.LandParticle.transform.rotation);
 
         ParticleSystem ps = landParticle.GetComponent<ParticleSystem>();
 
@@ -331,7 +296,7 @@ public class Player : MonoBehaviour
     {
         DetectColor();
 
-        foreach(GameObject ps in _jumpParticle)
+        foreach(GameObject ps in _player.JumpParticle)
         {
             GameObject _ps = Instantiate(ps, transform.position + new Vector3(0f, -1.75f, 0f), ps.transform.rotation);
 
@@ -349,32 +314,32 @@ public class Player : MonoBehaviour
         switch (_gameManager.ColorCode)
         {
             case ColorCode.Red:
-                var color = _redColor;
+                var color = _player.RedColor;
                 _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
                 break;
             
             case ColorCode.Green:
-                color = _greenColor;
+                color = _player.GreenColor;
                 _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
                 break;
             
             case ColorCode.Cyan:
-                color = _cyanColor;
+                color = _player.CyanColor;
                 _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
                 break;
             
             case ColorCode.Blue:
-                color = _blueColor;
+                color = _player.BlueColor;
                 _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
                 break;
             
             case ColorCode.Orange:
-                color = _orangeColor;
+                color = _player.OrangeColor;
                 _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
                 break;
             
             case ColorCode.Yellow:
-                color = _yellowColor;
+                color = _player.YellowColor;
                 _currentParticleGradient = new ParticleSystem.MinMaxGradient(color * 0.9f, color * 1.2f);
                 break;
 
