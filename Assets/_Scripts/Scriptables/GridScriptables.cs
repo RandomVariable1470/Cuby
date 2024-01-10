@@ -33,4 +33,6 @@ public class GridScriptables : ScriptableObject
     [field: SerializeField] public float FallingSpeed { get; private set; }
     [field: SerializeField] public float InitialDelayFalling { get; private set; }
     [field: SerializeField] public float SpeedUpFactorFalling { get; private set; }
+
+
 }

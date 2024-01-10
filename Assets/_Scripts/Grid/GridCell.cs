@@ -10,16 +10,14 @@ public class GridCell : MonoBehaviour
     [field:Header("References")]
     [field:SerializeField] public GameObject SpawnPoint { get; private set; }
     [field:SerializeField] public GameObject JumpPoint { get; private set; }
-    [SerializeField] private GridCellScriptables _gridCellScriptable;
+    [SerializeField] private AudioClip _destroyClip;
 
     [HideInInspector] public bool SelectedCell {get; set;}
 
     private int _posX;
     private int _posY;
 
-    private Vector3 _initialPosition;
     private int _columnId;
-    private float _offset;
 
     private GameManager _manager;
     private UIManager _uiManager;
@@ -29,7 +27,6 @@ public class GridCell : MonoBehaviour
 
     private void Start()
     {
-        _initialPosition = transform.position;
         _manager = GameManager.Instance;
         _uiManager = UIManager.Instance;
         _rb = GetComponent<Rigidbody>();
@@ -40,23 +37,6 @@ public class GridCell : MonoBehaviour
     public void SetColumn(int column)
     {
         _columnId = column;
-    }
-
-    private void Update() 
-    {
-        if (!_manager.HasCompletedGame) WaveAnimation();
-    }
-
-    private void WaveAnimation()
-    {
-        float phase = _columnId * _gridCellScriptable.WavePhaseMultiplier + (_posX + _posY) * 0.1f;
-        float sineWave = Mathf.Sin((Time.time + phase) * _gridCellScriptable.FloatMagnitude);
-        float yOffset = sineWave * _gridCellScriptable.FloatMagnitude;
-
-        _offset = Mathf.Lerp(_offset, yOffset, Time.deltaTime * _gridCellScriptable.FloatSpeed * 0.5f);
-
-        Vector3 newPosition = _initialPosition + new Vector3(0, _offset, 0);
-        transform.position = newPosition;
     }
 
     public void MakeMeFall(float _fallSpeed)
@@ -79,7 +59,7 @@ public class GridCell : MonoBehaviour
 
     public void PlayDestorySound()
     {
-        _audioSource.PlayOneShot(_gridCellScriptable.DestroyClip);
+        _audioSource.PlayOneShot(_destroyClip);
     }
 
     private void OnCollisionStay(Collision other) 

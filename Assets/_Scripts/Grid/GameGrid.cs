@@ -6,9 +6,10 @@ using System.Collections;
 public class GameGrid : Singleton<GameGrid>
 {
     [SerializeField] private GridScriptables _gridScriptableObject;
+    [SerializeField] private GridCellScriptables _gridCellScriptableObject;
 
-    [field: SerializeField] public bool HasCompletedTheGrid;
-    [field: SerializeField] public bool HasCompletedFalling;
+    [HideInInspector] public bool HasCompletedTheGrid;
+    [HideInInspector] public bool HasCompletedFalling;
 
     // Private Variables
     private GameObject[,] _gameGrid;
@@ -46,6 +47,13 @@ public class GameGrid : Singleton<GameGrid>
         catch (Exception e)
         {
             Debug.LogError($"Error: {e.Message}");
+        }
+    }
+
+    private void Update() {
+        if (!_gameManager.HasCompletedGame)
+        {
+            AnimateAllGridCells();
         }
     }
 
@@ -136,11 +144,33 @@ public class GameGrid : Singleton<GameGrid>
         }
     }
 
+    private void AnimateAllGridCells()
+    {
+        float time = Time.time;
+        for (int y = 0; y < _gridScriptableObject.Height; y++)
+        {
+            for (int x = 0; x < _gridScriptableObject.Width; x++)
+            {
+                Vector3 initialPosition = new Vector3(x * _gridScriptableObject.GridSpaceSize, 0, y * _gridScriptableObject.GridSpaceSize);
+                int columnId = y; 
 
+                float phase = columnId * _gridCellScriptableObject.WavePhaseMultiplier + (x + y) * _gridCellScriptableObject.VariationMultiplier;
+                float sineWave = Mathf.Sin((time + phase) * _gridCellScriptableObject.FloatMagnitude);
+                float yOffset = sineWave * _gridCellScriptableObject.FloatMagnitude;
+
+                GameObject cell = _gameGrid[y, x];
+                if (cell != null)
+                {
+                    Vector3 newPosition = initialPosition + new Vector3(0, yOffset, 0);
+                    cell.transform.position = newPosition;
+                }
+            }
+        }
+    }
 
     private void SpawnPlayer()
     {
-        if (_gridScriptableObject.SpawnCellXCoordinate >= 0 &&_gridScriptableObject.SpawnCellYCoordinate >= 0 && _gridScriptableObject.SpawnCellXCoordinate < _gridScriptableObject.Width &&_gridScriptableObject.SpawnCellYCoordinate < _gridScriptableObject.Height)
+        if (_gridScriptableObject.SpawnCellXCoordinate >= 0 && _gridScriptableObject.SpawnCellYCoordinate >= 0 && _gridScriptableObject.SpawnCellXCoordinate < _gridScriptableObject.Width && _gridScriptableObject.SpawnCellYCoordinate < _gridScriptableObject.Height)
         {
             GameObject cellObject = _gameGrid[_gridScriptableObject.SpawnCellYCoordinate, _gridScriptableObject.SpawnCellXCoordinate];
             GridCell gridCell = cellObject.GetComponent<GridCell>();

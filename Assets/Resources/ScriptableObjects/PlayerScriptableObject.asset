@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerScriptableObject
   m_EditorClassIdentifier: 
   <MoveSpeed>k__BackingField: 30
-  <Range>k__BackingField: 2
+  <Range>k__BackingField: 10
   <GroundCheck>k__BackingField: 2
   <SpawnSound>k__BackingField: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1,
     type: 3}
