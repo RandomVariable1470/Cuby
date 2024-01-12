@@ -22,7 +22,6 @@ public class UIManager : Singleton<UIManager>
 	[SerializeField] private GameObject _pauseMenuMenu;
 	[SerializeField] private GameObject _pauseOptionMenu;
 	[SerializeField] private Animator _pauseMenuAnimator;
-	[SerializeField] private Animator _pauseMenuMenuAnimator;
 	[SerializeField] private Animator _pauseMenuOptionAnimator;
 
 	#region Initilization
@@ -108,7 +107,7 @@ public class UIManager : Singleton<UIManager>
 
 	public async void TurnOnPauseOptionsMenu()
 	{
-		_pauseMenuMenuAnimator.CrossFade(OUT_TAG, 0f);
+		_pauseMenuAnimator.CrossFade(OUTPAUSE_TAG, 0f);
 		await Task.Delay(500);
 		_pauseMenuMenu.SetActive(false);
 		_pauseOptionMenu.SetActive(true);
@@ -121,9 +120,7 @@ public class UIManager : Singleton<UIManager>
 		await Task.Delay(500);
 		_pauseOptionMenu.SetActive(false);
 		_pauseMenuMenu.SetActive(true);
-		_pauseMenuMenuAnimator.CrossFade(IN_TAG, 0f);
-		await Task.Delay(500);
-		_pauseMenuMenuAnimator.CrossFade(NEWSTATE_TAG, 0f);
+		_pauseMenuAnimator.CrossFade(INPAUSE_TAG, 0f);
 	}
 
 	public async void ExitScenePauseMenu(string name)
@@ -143,6 +140,8 @@ public class UIManager : Singleton<UIManager>
 
 	private readonly string IN_TAG = "In";
 	private readonly string OUT_TAG = "Out";
+	private readonly string INPAUSE_TAG = "InPause";
+	private readonly string OUTPAUSE_TAG = "OutPause";
 	private readonly string FPS_TAG = "FPS";
 	private readonly string NEWSTATE_TAG = "New State";
 

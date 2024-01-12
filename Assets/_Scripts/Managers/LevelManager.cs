@@ -3,27 +3,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : SingletonPersistent<LevelManager>
 {
     [SerializeField] private GameObject _loaderCanvas;
     [SerializeField] private Image _progressBar;
 
-    public static LevelManager Instance;
-
     private float _target;
-
-    private void Awake() 
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     private void Update() 
     {

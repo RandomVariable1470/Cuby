@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     private bool _isRotating = false;
     private bool _wasMoving;
     private bool _canSwipe = true;
-    private float _swipeCooldownTime = 0.3f;
+    private float _swipeCooldownTime = 0.75f;
     private float _swipeCooldownTimer = 0f;
 
     private Quaternion _targetRotation;
@@ -265,7 +265,7 @@ public class Player : MonoBehaviour
     {
         if (_wasMoving && IsGrounded() && !_isMoving)
         {
-            _audioSource.PlayOneShot(_player.SwipeSound);
+            AudioManager.Instance.PlaySfx("OnLand");
 
             _wasMoving = false;
             Invoke(nameof(SpawnLandParticle), 0.1f);
@@ -274,7 +274,7 @@ public class Player : MonoBehaviour
 
     public void OnSpawnSound()
     {
-        _audioSource.PlayOneShot(_player.SpawnSound);
+        AudioManager.Instance.PlaySfx("Spawn");
     }
 
     private void SpawnLandParticle()

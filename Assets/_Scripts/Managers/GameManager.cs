@@ -20,6 +20,8 @@ public class GameManager : Singleton<GameManager>
     {
         _gameGrid = GameGrid.Instance;
         _uiManager = UIManager.Instance;
+
+        AudioManager.Instance.PlayMusic("Theme1");
     }
 
     private void Update() 

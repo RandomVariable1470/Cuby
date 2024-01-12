@@ -11,10 +11,7 @@ public class PlayerScriptable : ScriptableObject
     [field: SerializeField] public float GroundCheck { get; private set; }
 
     [field: Space(5)]
-    [field: Header("Audio & Effects")]
-    [field: SerializeField] public AudioClip SpawnSound { get; private set; }
-    [field: SerializeField] public AudioClip SwipeSound { get; private set; }
-    [field: Space(2)]
+    [field: Header("Effects")]
     [field: SerializeField] public GameObject[] JumpParticle { get; private set; }
     [field: SerializeField] public GameObject LandParticle { get; private set; }
 

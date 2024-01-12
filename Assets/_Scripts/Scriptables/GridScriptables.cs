@@ -25,10 +25,6 @@ public class GridScriptables : ScriptableObject
     [field: SerializeField] public float SpeedUpFactor { get; private set; }
 
     [field: Space(10)]
-    [field: Header("Audio Settings")]
-    [field: SerializeField] public AudioClip CreateClip { get; private set; }
-
-    [field: Space(10)]
     [field: Header("Falling Settings")]
     [field: SerializeField] public float FallingSpeed { get; private set; }
     [field: SerializeField] public float InitialDelayFalling { get; private set; }

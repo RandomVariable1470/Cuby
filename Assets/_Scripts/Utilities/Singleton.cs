@@ -35,7 +35,7 @@ public class SingletonPersistent<T> : MonoBehaviour
 	{
 		if (Instance == null) {
 			Instance = this as T;
-			DontDestroyOnLoad (this);
+			//DontDestroyOnLoad (this);
 		} else {
 			Destroy (gameObject);
 		}

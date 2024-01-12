@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ae7e5dfc869a24ea56357cf83e1394, type: 3}
   m_Name: GridCellScriptableObject
   m_EditorClassIdentifier: 
-  <FloatMagnitude>k__BackingField: 1.21
-  <VariationMultiplier>k__BackingField: 1.15
-  <WavePhaseMultiplier>k__BackingField: 0.5
-  <DestroyClip>k__BackingField: {fileID: 8300000, guid: e0cc9fb8a66924ebba0018f428ff3c52,
-    type: 3}
+  <FloatMagnitude>k__BackingField: 0.5
+  <FloatSpeed>k__BackingField: 2
+  <FloatSpeedSmoothness>k__BackingField: 0.3
+  <VariationMultiplier>k__BackingField: 0.1
+  <WavePhaseMultiplier>k__BackingField: 1

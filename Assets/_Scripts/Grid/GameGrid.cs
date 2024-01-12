@@ -12,8 +12,9 @@ public class GameGrid : Singleton<GameGrid>
     [HideInInspector] public bool HasCompletedFalling;
 
     // Private Variables
+    private float currentSpeedMultiplier = 1.0f; 
     private GameObject[,] _gameGrid;
-    private AudioSource _audioSource;
+    private GridCell[,] _gridCells;
     private GameManager _gameManager;
     private ObjectPool<GameObject> _pool;
     private float _delay;
@@ -42,7 +43,6 @@ public class GameGrid : Singleton<GameGrid>
         {
             StartCoroutine(CreateGrid());
             _gameManager = GameManager.Instance;
-            _audioSource = GetComponent<AudioSource>();
         }
         catch (Exception e)
         {
@@ -65,6 +65,7 @@ public class GameGrid : Singleton<GameGrid>
         }
 
         _gameGrid = new GameObject[_gridScriptableObject.Height, _gridScriptableObject.Width];
+        _gridCells = new GridCell[_gridScriptableObject.Height, _gridScriptableObject.Width];
 
         _delay = _gridScriptableObject.InitialDelay;
 
@@ -73,6 +74,7 @@ public class GameGrid : Singleton<GameGrid>
             for (int x = 0; x < _gridScriptableObject.Width; x++)
             {
                 var newCell = _pool.Get();
+                _gridCells[y, x] = newCell.GetComponent<GridCell>();
                 newCell.transform.position = new Vector3(x * _gridScriptableObject.GridSpaceSize, 0, y * _gridScriptableObject.GridSpaceSize);
                 newCell.transform.parent = transform;
                 newCell.name = $"Grid Space (X: {x}, Y: {y})";
@@ -81,10 +83,7 @@ public class GameGrid : Singleton<GameGrid>
                 gridCell.SetPosition(y, x);
                 gridCell.SetColumn(y);
 
-                if (_audioSource != null && _gridScriptableObject.CreateClip != null)
-                {
-                    _audioSource.PlayOneShot(_gridScriptableObject.CreateClip);
-                }
+                AudioManager.Instance.PlaySfx("OnCreateGrid");
 
                 _gameGrid[y, x] = newCell;
 
@@ -107,12 +106,13 @@ public class GameGrid : Singleton<GameGrid>
         {
             for (int x = 0; x < _gridScriptableObject.Width; x++)
             {
-                GridCell _cell = _gameGrid[y, x].GetComponent<GridCell>();
-
-                if (_cell != null && _cell != _gameManager._selectedCell)
+                foreach(GridCell _cell in _gridCells)
                 {
-                    _cell.MakeMeFall(_gridScriptableObject.FallingSpeed);
-                    yield return new WaitForSeconds(_delayFalling);
+                    if (_cell != null && _cell != _gameManager._selectedCell)
+                    {
+                        _cell.MakeMeFall(_gridScriptableObject.FallingSpeed);
+                        yield return new WaitForSeconds(_delayFalling);
+                    }
                 }
             }
             _delayFalling -= _gridScriptableObject.SpeedUpFactorFalling;
@@ -147,6 +147,10 @@ public class GameGrid : Singleton<GameGrid>
     private void AnimateAllGridCells()
     {
         float time = Time.time;
+        float deltaTime = Time.smoothDeltaTime;
+
+        currentSpeedMultiplier = Mathf.Lerp(currentSpeedMultiplier, _gridCellScriptableObject.FloatSpeed, _gridCellScriptableObject.FloatSpeedSmoothness * deltaTime);
+
         for (int y = 0; y < _gridScriptableObject.Height; y++)
         {
             for (int x = 0; x < _gridScriptableObject.Width; x++)
@@ -155,7 +159,7 @@ public class GameGrid : Singleton<GameGrid>
                 int columnId = y; 
 
                 float phase = columnId * _gridCellScriptableObject.WavePhaseMultiplier + (x + y) * _gridCellScriptableObject.VariationMultiplier;
-                float sineWave = Mathf.Sin((time + phase) * _gridCellScriptableObject.FloatMagnitude);
+                float sineWave = Mathf.Sin((time + phase) * _gridCellScriptableObject.FloatMagnitude * currentSpeedMultiplier);
                 float yOffset = sineWave * _gridCellScriptableObject.FloatMagnitude;
 
                 GameObject cell = _gameGrid[y, x];
