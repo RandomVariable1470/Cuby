@@ -27,8 +27,4 @@ MonoBehaviour:
   <SpawnCellYCoordinate>k__BackingField: 1
   <InitialDelay>k__BackingField: 0.15
   <SpeedUpFactor>k__BackingField: 0.0075
-  <CreateClip>k__BackingField: {fileID: 8300000, guid: e0cc9fb8a66924ebba0018f428ff3c52,
-    type: 3}
   <FallingSpeed>k__BackingField: 1000
-  <InitialDelayFalling>k__BackingField: 0.15
-  <SpeedUpFactorFalling>k__BackingField: 0.0075

@@ -69,14 +69,6 @@ public class GridCell : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit(Collision other) 
-    {
-        if (other.gameObject != null && other.gameObject.layer != 6 && SelectedCell)
-        {
-            _uiManager.ChangeHasInitilized();
-        }
-    }
-
     #region Cached Properteis
 
     private readonly string DESTROY_TAG = "Destroy";

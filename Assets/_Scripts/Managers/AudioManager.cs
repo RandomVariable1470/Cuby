@@ -23,6 +23,24 @@ public class AudioManager : SingletonPersistent<AudioManager>
         }
     }
 
+    public void StopMusic(string name)
+    {
+        Sound s = Array.Find(_musicSounds, x => x.name == name);
+
+        if (s == null)
+        {
+            Debug.Log("Sound not found");
+        }
+        else
+        {
+            if (s.clip == _musicAudioSource.clip)
+            {
+                _musicAudioSource.Stop();
+                _musicAudioSource.clip = null;
+            }
+        }
+    }
+
     public void PlaySfx(string name)
     {
         Sound s = Array.Find(_sfxSounds, x => x.name == name);

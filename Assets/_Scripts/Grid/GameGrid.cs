@@ -8,8 +8,9 @@ public class GameGrid : Singleton<GameGrid>
     [SerializeField] private GridScriptables _gridScriptableObject;
     [SerializeField] private GridCellScriptables _gridCellScriptableObject;
 
-    [HideInInspector] public bool HasCompletedTheGrid;
-    [HideInInspector] public bool HasCompletedFalling;
+    public bool HasCompletedTheGrid;
+    public bool HasCompletedFalling;
+    [HideInInspector] public Player Player;
 
     // Private Variables
     private float currentSpeedMultiplier = 1.0f; 
@@ -18,7 +19,6 @@ public class GameGrid : Singleton<GameGrid>
     private GameManager _gameManager;
     private ObjectPool<GameObject> _pool;
     private float _delay;
-    private float _delayFalling;
 
     private void Awake() 
     {
@@ -100,22 +100,16 @@ public class GameGrid : Singleton<GameGrid>
 
     public IEnumerator DestroyGrid()
     {
-        _delayFalling = _gridScriptableObject.InitialDelayFalling;
-
-        for (int y = 0; y < _gridScriptableObject.Height; y++)
+        foreach(GridCell cell in _gridCells)
         {
-            for (int x = 0; x < _gridScriptableObject.Width; x++)
+            for (int y = 0; y < _gridScriptableObject.Height; y++)
             {
-                foreach(GridCell _cell in _gridCells)
+                if (!cell.SelectedCell)
                 {
-                    if (_cell != null && _cell != _gameManager._selectedCell)
-                    {
-                        _cell.MakeMeFall(_gridScriptableObject.FallingSpeed);
-                        yield return new WaitForSeconds(_delayFalling);
-                    }
+                    cell.MakeMeFall(_gridScriptableObject.FallingSpeed);
+                    yield return null;
                 }
             }
-            _delayFalling -= _gridScriptableObject.SpeedUpFactorFalling;
         }
 
         HasCompletedFalling = true;
@@ -179,7 +173,8 @@ public class GameGrid : Singleton<GameGrid>
             GameObject cellObject = _gameGrid[_gridScriptableObject.SpawnCellYCoordinate, _gridScriptableObject.SpawnCellXCoordinate];
             GridCell gridCell = cellObject.GetComponent<GridCell>();
 
-            Instantiate(_gridScriptableObject.PlayerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
+            GameObject player = Instantiate(_gridScriptableObject.PlayerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
+            Player = player.GetComponent<Player>();
         }
         else
         {

@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private PlayerScriptable _player;
 
+    [HideInInspector] public Animator Animator;
+
     //Private Variables
     private SwipeListener swipeListener;
 
@@ -28,12 +30,12 @@ public class Player : MonoBehaviour
     private bool _isRotating = false;
     private bool _wasMoving;
     private bool _canSwipe = true;
-    private float _swipeCooldownTime = 0.75f;
     private float _swipeCooldownTimer = 0f;
 
     private Quaternion _targetRotation;
     private AudioSource _audioSource;
     private Rigidbody _rb;
+    private Collider _coll;
     private GameManager _gameManager;
     private ParticleSystem.MinMaxGradient _currentParticleGradient;
 
@@ -49,6 +51,8 @@ public class Player : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         _audioSource = GetComponent<AudioSource>();
         _gameManager = GameManager.Instance;
+        Animator = GetComponent<Animator>();
+        _coll = GetComponent<Collider>();
     }
 
     private void OnEnable()
@@ -208,7 +212,7 @@ public class Player : MonoBehaviour
         {
             _swipeCooldownTimer += Time.deltaTime;
 
-            if (_swipeCooldownTimer >= _swipeCooldownTime)
+            if (_swipeCooldownTimer >= _player.SwipeCooldownTime)
             {
                 _canSwipe = true;
                 _swipeCooldownTimer = 0f; 
@@ -275,6 +279,16 @@ public class Player : MonoBehaviour
     public void OnSpawnSound()
     {
         AudioManager.Instance.PlaySfx("Spawn");
+    }
+
+    public void OnDeSpawnSound()
+    {
+        AudioManager.Instance.PlaySfx("DeSpawn");
+    }
+
+    public void DisableColl()
+    {
+        _coll.enabled = false;
     }
 
     private void SpawnLandParticle()

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
@@ -7,6 +8,10 @@ public class GameManager : Singleton<GameManager>
     [field: Header("References")]
     [field: SerializeField] public ColorCode ColorCode {get; private set;}
     [field: SerializeField] public ColorCode SelectedCellColorCode {get; private set;}
+    [field: Space(5)]
+    [field: SerializeField] public string ThisLevelName { get; private set;}
+    [field: SerializeField] public string NextLevelName { get; private set;}
+    [field: SerializeField] public string MainMenuLevelName { get; private set;}
 
     [HideInInspector] public bool HasCompletedGame {get; set;}
     [HideInInspector] public GridCell _selectedCell {get; set;}
@@ -48,18 +53,23 @@ public class GameManager : Singleton<GameManager>
         {
             LevelCompletion();
         }
-        else
-        {
-            _uiManager.PopUpColorCode(1000);
-        }
     }
 
-    private void LevelCompletion()
+    private async void LevelCompletion()
     {
         HasCompletedGame = true;
+        _uiManager.TurnOffPauseBtn();
         StartCoroutine(_gameGrid.DestroyGrid());
-        _uiManager.ChangePopColorCodeText("Correct Color");
-        _uiManager.PopUpColorCode(2000);
+
+        if (_gameGrid.HasCompletedFalling)
+        {
+            _gameGrid.Player.DisableColl();
+            _gameGrid.Player.Animator.CrossFade(UNLOADING_TAG, 0f);
+
+            await Task.Delay(500);
+            
+            _uiManager.TurnOnLevelCompletionMenu();
+        }
     }
 
     private void SetSelectedCell()
@@ -69,4 +79,7 @@ public class GameManager : Singleton<GameManager>
             _selectedCell.SelectedCell = true;
         }
     }
+
+    private readonly string CORRECTCOLOR_TAG = "Correct Color";
+    private readonly string UNLOADING_TAG = "UnLoading";
 }

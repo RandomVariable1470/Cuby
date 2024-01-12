@@ -15,10 +15,7 @@ MonoBehaviour:
   <MoveSpeed>k__BackingField: 30
   <Range>k__BackingField: 10
   <GroundCheck>k__BackingField: 2
-  <SpawnSound>k__BackingField: {fileID: 8300000, guid: f16bd50fd16944350b3a9792f8840eb1,
-    type: 3}
-  <SwipeSound>k__BackingField: {fileID: 8300000, guid: d78f4dbcb907f4a3380d2b8806852e36,
-    type: 3}
+  <SwipeCooldownTime>k__BackingField: 0.6
   <JumpParticle>k__BackingField:
   - {fileID: 4186367470612733478, guid: 3ec9bab7eff8b7f478c99782148a269f, type: 3}
   - {fileID: 1060593315540875457, guid: 3ce22b6dd527814458b6aa301a1ff81b, type: 3}

@@ -10,12 +10,6 @@ public class UIManager : Singleton<UIManager>
 	private float _time;
 	private int _frameCount;
 
-	[Header("Pop Up For Cell Color")]
-	[SerializeField] private GameObject _popCellColor;
-	[SerializeField] private TextMeshProUGUI _popCellColorText;
-	[SerializeField] private Animator _popCellColorAnimator;
-	private bool _hasInitilized;
-
 	[Header("Pause Menu")]
 	[SerializeField] private GameObject _pauseBtn;
 	[SerializeField] private GameObject _pauseMenu;
@@ -24,7 +18,18 @@ public class UIManager : Singleton<UIManager>
 	[SerializeField] private Animator _pauseMenuAnimator;
 	[SerializeField] private Animator _pauseMenuOptionAnimator;
 
+	[Header("Level Completion")]
+	[SerializeField] private GameObject _levelCompletionMenu;
+	[SerializeField] private Animator _levelCompletionMenuAnim;
+
+	private GameManager _gameManager;
+
 	#region Initilization
+
+	private void Start() 
+	{
+		_gameManager = GameManager.Instance;
+	}
 
 	private void Update() 
 	{
@@ -56,42 +61,12 @@ public class UIManager : Singleton<UIManager>
 
 	#endregion
 
-	#region PopUp
-
-	public async void PopUpColorCode(int delayTime)
-	{
-		if (!_hasInitilized)
-		{
-			_hasInitilized = true;
-			_popCellColor.SetActive(true);
-			_popCellColorAnimator.CrossFade(IN_TAG, 0f);
-
-			await Task.Delay(delayTime);
-
-			_popCellColorAnimator.CrossFade(OUT_TAG, 0f);
-
-			await Task.Delay(300);
-
-			_popCellColor.SetActive(false);
-		}
-	}
-
-	public void ChangePopColorCodeText(string text)
-	{
-		_popCellColorText.text = text;
-	}
-
-	public void ChangeHasInitilized()
-	{
-		_hasInitilized = false;
-	}
-
-	#endregion
-
 	#region PauseMenu
 
 	public void TurnOnPauseMenu()
 	{
+		Time.timeScale = 0f;
+		AudioManager.Instance.StopMusic("Theme1");
 		_pauseBtn.SetActive(false);
 		_pauseMenu.SetActive(true);
 		_pauseMenuAnimator.CrossFade(IN_TAG, 0f);
@@ -103,6 +78,8 @@ public class UIManager : Singleton<UIManager>
 		await Task.Delay(500);
 		_pauseBtn.SetActive(true);
 		_pauseMenu.SetActive(false);
+		AudioManager.Instance.PlayMusic("Theme1");
+		Time.timeScale = 1f;
 	}
 
 	public async void TurnOnPauseOptionsMenu()
@@ -123,16 +100,60 @@ public class UIManager : Singleton<UIManager>
 		_pauseMenuAnimator.CrossFade(INPAUSE_TAG, 0f);
 	}
 
-	public async void ExitScenePauseMenu(string name)
+	public async void ExitScenePauseMenu()
 	{
-		TurnOffPauseMenu();
+		_pauseMenuAnimator.CrossFade(OUT_TAG, 0f);
 		await Task.Delay(500);
-		LevelManager.Instance.LevelLoad(name);
+		_pauseBtn.SetActive(true);
+		_pauseMenu.SetActive(false);
+		AudioManager.Instance.StopMusic("Theme1");
+		LevelManager.Instance.LevelLoad(_gameManager.MainMenuLevelName);
 	}
 
     #endregion
 
     #region LevelCompletionMenu
+
+	public void TurnOnLevelCompletionMenu()
+	{
+		_levelCompletionMenu.SetActive(true);
+		AudioManager.Instance.StopMusic("Theme1");
+		_levelCompletionMenuAnim.CrossFade(IN_TAG, 0f);
+	}
+
+	public async void TurnOffLevelCompletionMenu()
+	{
+		_levelCompletionMenuAnim.CrossFade(OUT_TAG, 0f);
+		await Task.Delay(1000);
+		AudioManager.Instance.StopMusic("Theme1");
+		_levelCompletionMenu.SetActive(false);
+	}
+
+	public async void ExitLevelCompletionMenu()
+	{
+		TurnOffLevelCompletionMenu();
+		await Task.Delay(1000);
+		LevelManager.Instance.LevelLoad(_gameManager.MainMenuLevelName);
+	}
+
+	public async void NextLevelLevelCompletionMenu()
+	{
+		TurnOffLevelCompletionMenu();
+		await Task.Delay(1000);
+		LevelManager.Instance.LevelLoad(_gameManager.NextLevelName);
+	}
+
+	public async void RestartLevelCompletionMenu()
+	{
+		TurnOffLevelCompletionMenu();
+		await Task.Delay(1000);
+		LevelManager.Instance.LevelLoad(_gameManager.ThisLevelName);
+	}
+
+	public void TurnOffPauseBtn()
+	{
+		_pauseBtn.SetActive(false);
+	}
 
     #endregion
 
@@ -143,7 +164,6 @@ public class UIManager : Singleton<UIManager>
 	private readonly string INPAUSE_TAG = "InPause";
 	private readonly string OUTPAUSE_TAG = "OutPause";
 	private readonly string FPS_TAG = "FPS";
-	private readonly string NEWSTATE_TAG = "New State";
 
 	#endregion
 }

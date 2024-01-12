@@ -9,6 +9,7 @@ public class PlayerScriptable : ScriptableObject
     [field: SerializeField] public float MoveSpeed { get; private set; }
     [field: SerializeField] public float Range { get; private set; }
     [field: SerializeField] public float GroundCheck { get; private set; }
+    [field: SerializeField] public float SwipeCooldownTime { get; private set;}
 
     [field: Space(5)]
     [field: Header("Effects")]

@@ -26,6 +26,8 @@ public class LevelManager : SingletonPersistent<LevelManager>
 
         _loaderCanvas.SetActive(true);
 
+        Time.timeScale = 1f;
+
         do
         {
             await Task.Delay(100);
