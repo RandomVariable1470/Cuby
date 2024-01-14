@@ -9,6 +9,22 @@ public class LevelManager : SingletonPersistent<LevelManager>
     [SerializeField] private Image _progressBar;
 
     private float _target;
+    private UIManager _uiManager;
+
+    private void Start() 
+    {
+        _uiManager = UIManager.Instance;
+
+        int levelReached = PlayerPrefs.GetInt("levelReached", 1);
+
+        for (int i = 0; i < _uiManager.LevelButtons.Length; i++)
+        {
+            if (i + 1 > levelReached)
+            {
+                _uiManager.LevelButtons[i].interactable = false;
+            }
+        }
+    }
 
     private void Update() 
     {

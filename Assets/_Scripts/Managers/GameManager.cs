@@ -12,6 +12,8 @@ public class GameManager : Singleton<GameManager>
     [field: SerializeField] public string ThisLevelName { get; private set;}
     [field: SerializeField] public string NextLevelName { get; private set;}
     [field: SerializeField] public string MainMenuLevelName { get; private set;}
+    [field: Space(5)]
+    [field: SerializeField] public bool IsMainMenu { get; private set;}
 
     [HideInInspector] public bool HasCompletedGame {get; set;}
     [HideInInspector] public GridCell _selectedCell {get; set;}
@@ -79,7 +81,6 @@ public class GameManager : Singleton<GameManager>
             _selectedCell.SelectedCell = true;
         }
     }
-
-    private readonly string CORRECTCOLOR_TAG = "Correct Color";
+    
     private readonly string UNLOADING_TAG = "UnLoading";
 }

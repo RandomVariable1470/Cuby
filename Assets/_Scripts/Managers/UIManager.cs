@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -21,6 +22,16 @@ public class UIManager : Singleton<UIManager>
 	[Header("Level Completion")]
 	[SerializeField] private GameObject _levelCompletionMenu;
 	[SerializeField] private Animator _levelCompletionMenuAnim;
+
+	[Header("MainMenu")]
+	[SerializeField] private GameObject _mainMenu;
+	[SerializeField] private GameObject _mainMenuMenu;
+	[SerializeField] private Animator _mainMenuAnimator;
+	[field: SerializeField] public Button[] LevelButtons {get; private set;}
+	[SerializeField] private GameObject _optionsMenu;
+	[SerializeField] private Animator _optionsMenuAnimator;
+	[SerializeField] private GameObject _levelSelection;
+	[SerializeField] private Animator _levelSelectionAnimator;
 
 	private GameManager _gameManager;
 
@@ -157,12 +168,67 @@ public class UIManager : Singleton<UIManager>
 
     #endregion
 
+	#region MainMenu
+
+	public void TurnOnMainMenu()
+	{
+		_mainMenu.SetActive(true);
+		_mainMenuAnimator.CrossFade(IN_TAG, 0f);
+	}
+
+	public async void TurnOffMainMenu()
+	{
+		_mainMenuAnimator.CrossFade(OUT_TAG, 0f);
+		await Task.Delay(500);
+		_mainMenu.SetActive(false);
+	}
+
+	public async void TurnOnOptionsMenu()
+	{	
+		_mainMenuAnimator.CrossFade(OUTMENU_TAG, 0f);
+		await Task.Delay(500);
+		_mainMenuMenu.SetActive(false);
+		_optionsMenu.SetActive(true);
+		_optionsMenuAnimator.CrossFade(IN_TAG, 0f);
+	}
+
+	public async void TurnOffOptionsMenu()
+	{
+		_optionsMenuAnimator.CrossFade(OUT_TAG, 0f);
+		await Task.Delay(500);
+		_optionsMenu.SetActive(false);
+		_mainMenuMenu.SetActive(true);
+		_mainMenuAnimator.CrossFade(INMENU_TAG, 0f);
+	}
+
+	public async void TurnOnLevelSelection()
+	{
+		_mainMenuAnimator.CrossFade(OUTMENU_TAG, 0f);
+		await Task.Delay(500);
+		_mainMenuMenu.SetActive(false);
+		_levelSelection.SetActive(true);
+		_levelSelectionAnimator.CrossFade(IN_TAG, 0f);
+	}
+
+	public async void TurnOffLevelSelection()
+	{
+		_levelSelectionAnimator.CrossFade(OUT_TAG, 0f);
+		await Task.Delay(500);
+		_levelSelection.SetActive(false);
+		_mainMenuMenu.SetActive(true);
+		_mainMenuAnimator.CrossFade(INMENU_TAG, 0f);
+	}
+
+	#endregion
+
 	#region Cached Properties
 
 	private readonly string IN_TAG = "In";
 	private readonly string OUT_TAG = "Out";
 	private readonly string INPAUSE_TAG = "InPause";
 	private readonly string OUTPAUSE_TAG = "OutPause";
+	private readonly string INMENU_TAG = "InMenu";
+	private readonly string OUTMENU_TAG = "OutMenu";
 	private readonly string FPS_TAG = "FPS";
 
 	#endregion

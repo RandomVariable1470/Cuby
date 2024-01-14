@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb1041048e6ff0b438a7a309f11129a6, type: 3}
-  m_Name: GridScriptableObject
+  m_Name: Level27Grid
   m_EditorClassIdentifier: 
   <GridCellPrefab>k__BackingField: {fileID: 222794676646655662, guid: 639e28a561819a447ab75ea37fce5ebd,
     type: 3}

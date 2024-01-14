@@ -10,6 +10,7 @@ public class GameGrid : Singleton<GameGrid>
 
     public bool HasCompletedTheGrid;
     public bool HasCompletedFalling;
+    public bool DontSpawnPlayer;
     [HideInInspector] public Player Player;
 
     // Private Variables
@@ -50,7 +51,8 @@ public class GameGrid : Singleton<GameGrid>
         }
     }
 
-    private void Update() {
+    private void Update() 
+    {
         if (!_gameManager.HasCompletedGame)
         {
             AnimateAllGridCells();
@@ -95,7 +97,7 @@ public class GameGrid : Singleton<GameGrid>
 
         HasCompletedTheGrid = true;
         ColorGridCell(_gridScriptableObject.XFinalCellCoordinate, _gridScriptableObject.YFinalCellCoordinate, _gridScriptableObject.FinalCellColor);
-        SpawnPlayer();
+        if (!DontSpawnPlayer) SpawnPlayer();
     }
 
     public IEnumerator DestroyGrid()
