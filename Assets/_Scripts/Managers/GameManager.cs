@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -12,8 +13,13 @@ public class GameManager : Singleton<GameManager>
     [field: SerializeField] public string ThisLevelName { get; private set;}
     [field: SerializeField] public string NextLevelName { get; private set;}
     [field: SerializeField] public string MainMenuLevelName { get; private set;}
+    [field: SerializeField] public string SongName { get; private set;}
     [field: Space(5)]
     [field: SerializeField] public bool IsMainMenu { get; private set;}
+    [field: SerializeField] public int LevelToUnlock { get; private set;}
+    [field: SerializeField] public bool IsPaused { get; private set;}
+    [field: Space(5)]
+    [field: SerializeField] public AudioMixer _audioMicer { get; private set;}
 
     [HideInInspector] public bool HasCompletedGame {get; set;}
     [HideInInspector] public GridCell _selectedCell {get; set;}
@@ -28,16 +34,18 @@ public class GameManager : Singleton<GameManager>
         _gameGrid = GameGrid.Instance;
         _uiManager = UIManager.Instance;
 
-        AudioManager.Instance.PlayMusic("Theme1");
+        AudioManager.Instance.PlayMusic(SongName);
     }
 
     private void Update() 
     {
         SetSelectedCell();
+
+        if (Time.timeScale != 0) IsPaused = false;
+        else IsPaused = true;
     }
 
     #endregion
-
 
     public void ChangeColor(ColorCode _color)
     {
@@ -71,6 +79,7 @@ public class GameManager : Singleton<GameManager>
             await Task.Delay(500);
             
             _uiManager.TurnOnLevelCompletionMenu();
+            PlayerPrefs.SetInt("levelReached", LevelToUnlock);
         }
     }
 

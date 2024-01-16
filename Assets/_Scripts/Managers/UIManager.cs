@@ -7,6 +7,7 @@ public class UIManager : Singleton<UIManager>
 {
 	[Header("FpsCounter")]
 	[SerializeField] private TextMeshProUGUI _fpsText;
+	[SerializeField] private TextMeshProUGUI _levelIndicatorText;
 	private float _pollingTime = 1f;
 	private float _time;
 	private int _frameCount;
@@ -27,11 +28,12 @@ public class UIManager : Singleton<UIManager>
 	[SerializeField] private GameObject _mainMenu;
 	[SerializeField] private GameObject _mainMenuMenu;
 	[SerializeField] private Animator _mainMenuAnimator;
-	[field: SerializeField] public Button[] LevelButtons {get; private set;}
 	[SerializeField] private GameObject _optionsMenu;
 	[SerializeField] private Animator _optionsMenuAnimator;
 	[SerializeField] private GameObject _levelSelection;
 	[SerializeField] private Animator _levelSelectionAnimator;
+	[SerializeField] private Slider _musicSliderMainMenu;
+	[SerializeField] private Slider _sfxSliderMainMenu;
 
 	private GameManager _gameManager;
 
@@ -40,6 +42,24 @@ public class UIManager : Singleton<UIManager>
 	private void Start() 
 	{
 		_gameManager = GameManager.Instance;
+
+		if (_levelIndicatorText != null)
+		{
+			_levelIndicatorText.text = _gameManager.ThisLevelName;
+		}
+
+		if (PlayerPrefs.HasKey("musicVolumeSlider"))
+		{
+			float musicVolume = PlayerPrefs.GetFloat("musicVolumeSlider");
+			_gameManager._audioMicer.SetFloat("music", Mathf.Log10(musicVolume)*20f);
+			_musicSliderMainMenu.value = musicVolume;
+		}
+		if (PlayerPrefs.HasKey("sfxVolumeSlider"))
+		{
+			float sfxVolume = PlayerPrefs.GetFloat("sfxVolumeSlider");
+			_gameManager._audioMicer.SetFloat("sfx", Mathf.Log10(sfxVolume)*20f);
+			_sfxSliderMainMenu.value = sfxVolume;
+		}
 	}
 
 	private void Update() 
@@ -118,7 +138,7 @@ public class UIManager : Singleton<UIManager>
 		_pauseBtn.SetActive(true);
 		_pauseMenu.SetActive(false);
 		AudioManager.Instance.StopMusic("Theme1");
-		LevelManager.Instance.LevelLoad(_gameManager.MainMenuLevelName);
+		SceneTransitioner.Instance.LoadScene(_gameManager.MainMenuLevelName, SceneTransitionMode.Circle);
 	}
 
     #endregion
@@ -144,21 +164,21 @@ public class UIManager : Singleton<UIManager>
 	{
 		TurnOffLevelCompletionMenu();
 		await Task.Delay(1000);
-		LevelManager.Instance.LevelLoad(_gameManager.MainMenuLevelName);
+		SceneTransitioner.Instance.LoadScene(_gameManager.MainMenuLevelName, SceneTransitionMode.Circle);
 	}
 
 	public async void NextLevelLevelCompletionMenu()
 	{
 		TurnOffLevelCompletionMenu();
 		await Task.Delay(1000);
-		LevelManager.Instance.LevelLoad(_gameManager.NextLevelName);
+		SceneTransitioner.Instance.LoadScene(_gameManager.NextLevelName, SceneTransitionMode.Circle);
 	}
 
 	public async void RestartLevelCompletionMenu()
 	{
 		TurnOffLevelCompletionMenu();
 		await Task.Delay(1000);
-		LevelManager.Instance.LevelLoad(_gameManager.ThisLevelName);
+		SceneTransitioner.Instance.LoadScene(_gameManager.ThisLevelName, SceneTransitionMode.Circle);
 	}
 
 	public void TurnOffPauseBtn()
@@ -217,6 +237,21 @@ public class UIManager : Singleton<UIManager>
 		_levelSelection.SetActive(false);
 		_mainMenuMenu.SetActive(true);
 		_mainMenuAnimator.CrossFade(INMENU_TAG, 0f);
+	}
+
+	public void SetMusicVolume()
+	{
+		float volume = _musicSliderMainMenu.value;
+		_gameManager._audioMicer.SetFloat("music", Mathf.Log10(volume)*20f);
+
+		PlayerPrefs.SetFloat("musicVolumeSlider", volume);
+	}
+	public void SetSFXVolume()
+	{
+		float volume = _sfxSliderMainMenu.value;
+		_gameManager._audioMicer.SetFloat("sfx", Mathf.Log10(volume)*20f);
+
+		PlayerPrefs.SetFloat("sfxVolumeSlider", volume);
 	}
 
 	#endregion

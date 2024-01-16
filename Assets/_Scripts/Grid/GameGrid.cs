@@ -10,6 +10,7 @@ public class GameGrid : Singleton<GameGrid>
 
     public bool HasCompletedTheGrid;
     public bool HasCompletedFalling;
+    public bool ShouldNotPlaySpawnSound;
     public bool DontSpawnPlayer;
     [HideInInspector] public Player Player;
 
@@ -85,7 +86,7 @@ public class GameGrid : Singleton<GameGrid>
                 gridCell.SetPosition(y, x);
                 gridCell.SetColumn(y);
 
-                AudioManager.Instance.PlaySfx("OnCreateGrid");
+                if (!ShouldNotPlaySpawnSound) AudioManager.Instance.PlaySfx("OnCreateGrid");
 
                 _gameGrid[y, x] = newCell;
 
