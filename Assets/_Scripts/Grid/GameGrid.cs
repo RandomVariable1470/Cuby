@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameGrid : Singleton<GameGrid>
 {
@@ -21,6 +22,7 @@ public class GameGrid : Singleton<GameGrid>
     private GameManager _gameManager;
     private ObjectPool<GameObject> _pool;
     private float _delay;
+    private int count;
 
     private void Awake() 
     {
@@ -45,6 +47,7 @@ public class GameGrid : Singleton<GameGrid>
         {
             StartCoroutine(CreateGrid());
             _gameManager = GameManager.Instance;
+            currentSpeedMultiplier = 1.0f;
         }
         catch (Exception e)
         {
@@ -69,6 +72,7 @@ public class GameGrid : Singleton<GameGrid>
 
         _gameGrid = new GameObject[_gridScriptableObject.Height, _gridScriptableObject.Width];
         _gridCells = new GridCell[_gridScriptableObject.Height, _gridScriptableObject.Width];
+        var _availableGridCells = GenericPool<List<GridCell>>.Get();
 
         _delay = _gridScriptableObject.InitialDelay;
 
@@ -83,11 +87,15 @@ public class GameGrid : Singleton<GameGrid>
                 newCell.name = $"Grid Space (X: {x}, Y: {y})";
 
                 GridCell gridCell  = newCell.GetComponent<GridCell>();
-                gridCell.SetPosition(y, x);
-                gridCell.SetColumn(y);
+                if (gridCell != null)
+                {
+                    gridCell.SetPosition(y, x);
+                    gridCell.SetColumn(y);
+                    _availableGridCells.Add(gridCell);
+                }
 
                 if (!ShouldNotPlaySpawnSound) AudioManager.Instance.PlaySfx("OnCreateGrid");
-
+                
                 _gameGrid[y, x] = newCell;
 
                 yield return new WaitForSeconds(_delay); 
@@ -98,6 +106,7 @@ public class GameGrid : Singleton<GameGrid>
 
         HasCompletedTheGrid = true;
         ColorGridCell(_gridScriptableObject.XFinalCellCoordinate, _gridScriptableObject.YFinalCellCoordinate, _gridScriptableObject.FinalCellColor);
+        MakeProhibitedCell(_gridScriptableObject.ProhibitedCellPositions);
         if (!DontSpawnPlayer) SpawnPlayer();
     }
 
@@ -116,6 +125,29 @@ public class GameGrid : Singleton<GameGrid>
         }
 
         HasCompletedFalling = true;
+    }
+
+    private void MakeProhibitedCell(List<Vector2Int> prohibitedCellPositions)
+    {
+        foreach (var position in prohibitedCellPositions)
+        {
+            int x = position.x;
+            int y = position.y;
+
+            if (x >= 0 && y >= 0 && x < _gameGrid.GetLength(1) && y < _gameGrid.GetLength(0))
+            {
+                GridCell grid = _gridCells[y, x];
+
+                if (grid != null)
+                {
+                    grid.CantGo = true;
+                }
+            }
+            else
+            {
+                throw new Exception($"Cell at position ({x}, {y}) does not exist in the grid or is out of bounds.");
+            }
+        }
     }
 
     public void ColorGridCell(int x, int y, Color color)
@@ -144,9 +176,8 @@ public class GameGrid : Singleton<GameGrid>
     private void AnimateAllGridCells()
     {
         float time = Time.time;
-        float deltaTime = Time.smoothDeltaTime;
 
-        currentSpeedMultiplier = Mathf.Lerp(currentSpeedMultiplier, _gridCellScriptableObject.FloatSpeed, _gridCellScriptableObject.FloatSpeedSmoothness * deltaTime);
+        currentSpeedMultiplier = Mathf.Lerp(currentSpeedMultiplier, _gridCellScriptableObject.FloatSpeed, _gridCellScriptableObject.FloatSpeedSmoothness);
 
         for (int y = 0; y < _gridScriptableObject.Height; y++)
         {
@@ -175,6 +206,8 @@ public class GameGrid : Singleton<GameGrid>
         {
             GameObject cellObject = _gameGrid[_gridScriptableObject.SpawnCellYCoordinate, _gridScriptableObject.SpawnCellXCoordinate];
             GridCell gridCell = cellObject.GetComponent<GridCell>();
+
+            gridCell.SpawnCell = true;
 
             GameObject player = Instantiate(_gridScriptableObject.PlayerPrefab, gridCell.SpawnPoint.transform.position, Quaternion.identity);
             Player = player.GetComponent<Player>();

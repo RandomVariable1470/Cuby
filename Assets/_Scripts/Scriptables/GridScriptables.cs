@@ -11,6 +11,8 @@ public class GridScriptables : ScriptableObject
     [field: SerializeField] public int Width { get; private set; }
     [field: SerializeField] public float GridSpaceSize { get; private set; }
     [field: Space(5)]
+    [field: SerializeField] public List<Vector2Int> ProhibitedCellPositions;
+    [field: Space(5)]
     [field: SerializeField] public int XFinalCellCoordinate { get; private set; }
     [field: SerializeField] public int YFinalCellCoordinate { get; private set; }
     [field: SerializeField] public Color FinalCellColor { get; private set; }

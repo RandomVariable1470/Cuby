@@ -10,8 +10,11 @@ public class GridCell : MonoBehaviour
     [field:Header("References")]
     [field:SerializeField] public GameObject SpawnPoint { get; private set; }
     [field:SerializeField] public GameObject JumpPoint { get; private set; }
+    [SerializeField] private GameObject _cantGoSign;
 
     [HideInInspector] public bool SelectedCell {get; set;}
+    public bool SpawnCell {get; set;}
+    [HideInInspector] public bool CantGo {get; set;}
 
     private int _posX;
     private int _posY;
@@ -19,18 +22,19 @@ public class GridCell : MonoBehaviour
     private int _columnId;
 
     private GameManager _manager;
-    private UIManager _uiManager;
-    private AudioSource _audioSource;
     private Animator _anim;
     private Rigidbody _rb;
 
     private void Start()
     {
         _manager = GameManager.Instance;
-        _uiManager = UIManager.Instance;
         _rb = GetComponent<Rigidbody>();
         _anim = GetComponent<Animator>();
-        _audioSource = GetComponent<AudioSource>();
+    }
+
+    private void Update() 
+    {
+        if (CantGo) _cantGoSign.SetActive(true);
     }
 
     public void SetColumn(int column)

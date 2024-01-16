@@ -64,6 +64,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 3cf9558e7babd4a108a41a205e2e0244, type: 3}
   - name: UIClick
     clip: {fileID: 8300000, guid: e26b12344a8fdd2439361d014323be33, type: 3}
+  - name: CantGo
+    clip: {fileID: 8300000, guid: 058f154a21be44992a859e61afcbedcb, type: 3}
   _musicAudioSource: {fileID: 7987357056271947223}
   _sfxAudioSource: {fileID: 5514517310930991391}
 --- !u!1 &6352008251051723295

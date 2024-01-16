@@ -17,7 +17,8 @@ MonoBehaviour:
   <Height>k__BackingField: 6
   <Width>k__BackingField: 3
   <GridSpaceSize>k__BackingField: 6
-  <XFinalCellCoordinate>k__BackingField: 1
+  NoOfProhibitedCells: 1
+  <XFinalCellCoordinate>k__BackingField: 0
   <YFinalCellCoordinate>k__BackingField: 5
   <FinalCellColor>k__BackingField: {r: 1, g: 0, b: 0, a: 0}
   <SelectedCellColorCode>k__BackingField: 0

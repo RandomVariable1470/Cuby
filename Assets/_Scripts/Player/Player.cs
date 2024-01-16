@@ -170,34 +170,50 @@ public class Player : MonoBehaviour
         switch (swipe)
         {
             case "Up":
-                if (_gridCellFront != null)
+                if (_gridCellFront != null && !_gridCellFront.CantGo)
                 {
                     MakePlayerJumpToCell(_frontCellPoint);
                     RotateCubeSmoothly(Quaternion.Euler(90, 0, 0));
                 }
+                else
+                {
+                    AudioManager.Instance.PlaySfx("CantGo");
+                }
                 break;
 
             case "Down":
-                if (_gridCellBack != null)
+                if (_gridCellBack != null && !_gridCellBack.CantGo)
                 {
                     MakePlayerJumpToCell(_backCellPoint);
                     RotateCubeSmoothly(Quaternion.Euler(-90, 0, 0));
                 }
+                else
+                {
+                    AudioManager.Instance.PlaySfx("CantGo");
+                }
                 break;
 
             case "Right":
-                if (_gridCellLeft != null)
+                if (_gridCellLeft != null && !_gridCellLeft.CantGo)
                 {
                     MakePlayerJumpToCell(_leftCellPoint);
                     RotateCubeSmoothly(Quaternion.Euler(0, 0, 90));
                 }
+                else
+                {
+                    AudioManager.Instance.PlaySfx("CantGo");
+                }
                 break;
 
             case "Left":
-                if (_gridCellRight != null)
+                if (_gridCellRight != null && !_gridCellRight.CantGo)
                 {
                     MakePlayerJumpToCell(_rightCellPoint);
                     RotateCubeSmoothly(Quaternion.Euler(0, 0, -90));
+                }
+                else
+                {
+                    AudioManager.Instance.PlaySfx("CantGo");
                 }
                 break;
 

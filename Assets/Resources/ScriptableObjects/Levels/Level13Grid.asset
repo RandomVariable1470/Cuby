@@ -17,8 +17,9 @@ MonoBehaviour:
   <Height>k__BackingField: 6
   <Width>k__BackingField: 3
   <GridSpaceSize>k__BackingField: 6
-  <XFinalCellCoordinate>k__BackingField: 1
-  <YFinalCellCoordinate>k__BackingField: 5
+  NoOfProhibitedCells: 1
+  <XFinalCellCoordinate>k__BackingField: 0
+  <YFinalCellCoordinate>k__BackingField: 0
   <FinalCellColor>k__BackingField: {r: 1, g: 0, b: 0, a: 0}
   <SelectedCellColorCode>k__BackingField: 0
   <PlayerPrefab>k__BackingField: {fileID: 8187537117994103315, guid: 850f8b0ea61d2e44481c43ff9cefef41,
