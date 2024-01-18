@@ -98,6 +98,7 @@ public class UIManager : Singleton<UIManager>
 	{
 		Time.timeScale = 0f;
 		AudioManager.Instance.StopMusic("Theme1");
+		AudioManager.Instance.PlaySfx("UIClick");
 		_pauseBtn.SetActive(false);
 		_pauseMenu.SetActive(true);
 		_pauseMenuAnimator.CrossFade(IN_TAG, 0f);
@@ -106,6 +107,7 @@ public class UIManager : Singleton<UIManager>
 	public async void TurnOffPauseMenu()
 	{
 		_pauseMenuAnimator.CrossFade(OUT_TAG, 0f);
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(500);
 		_pauseBtn.SetActive(true);
 		_pauseMenu.SetActive(false);
@@ -116,6 +118,7 @@ public class UIManager : Singleton<UIManager>
 	public async void TurnOnPauseOptionsMenu()
 	{
 		_pauseMenuAnimator.CrossFade(OUTPAUSE_TAG, 0f);
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(500);
 		_pauseMenuMenu.SetActive(false);
 		_pauseOptionMenu.SetActive(true);
@@ -125,6 +128,7 @@ public class UIManager : Singleton<UIManager>
 	public async void TurnOffPauseOptionsMenu()
 	{
 		_pauseMenuOptionAnimator.CrossFade(OUT_TAG, 0f);
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(500);
 		_pauseOptionMenu.SetActive(false);
 		_pauseMenuMenu.SetActive(true);
@@ -133,10 +137,9 @@ public class UIManager : Singleton<UIManager>
 
 	public async void ExitScenePauseMenu()
 	{
-		_pauseMenuAnimator.CrossFade(OUT_TAG, 0f);
+		TurnOffPauseMenu();
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(500);
-		_pauseBtn.SetActive(true);
-		_pauseMenu.SetActive(false);
 		AudioManager.Instance.StopMusic("Theme1");
 		SceneTransitioner.Instance.LoadScene(_gameManager.MainMenuLevelName, SceneTransitionMode.Circle);
 	}
@@ -148,7 +151,6 @@ public class UIManager : Singleton<UIManager>
 	public void TurnOnLevelCompletionMenu()
 	{
 		_levelCompletionMenu.SetActive(true);
-		AudioManager.Instance.StopMusic("Theme1");
 		_levelCompletionMenuAnim.CrossFade(IN_TAG, 0f);
 	}
 
@@ -156,13 +158,13 @@ public class UIManager : Singleton<UIManager>
 	{
 		_levelCompletionMenuAnim.CrossFade(OUT_TAG, 0f);
 		await Task.Delay(1000);
-		AudioManager.Instance.StopMusic("Theme1");
 		_levelCompletionMenu.SetActive(false);
 	}
 
 	public async void ExitLevelCompletionMenu()
 	{
 		TurnOffLevelCompletionMenu();
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(1000);
 		SceneTransitioner.Instance.LoadScene(_gameManager.MainMenuLevelName, SceneTransitionMode.Circle);
 	}
@@ -170,6 +172,7 @@ public class UIManager : Singleton<UIManager>
 	public async void NextLevelLevelCompletionMenu()
 	{
 		TurnOffLevelCompletionMenu();
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(1000);
 		SceneTransitioner.Instance.LoadScene(_gameManager.NextLevelName, SceneTransitionMode.Circle);
 	}
@@ -177,6 +180,7 @@ public class UIManager : Singleton<UIManager>
 	public async void RestartLevelCompletionMenu()
 	{
 		TurnOffLevelCompletionMenu();
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(1000);
 		SceneTransitioner.Instance.LoadScene(_gameManager.ThisLevelName, SceneTransitionMode.Circle);
 	}
@@ -206,6 +210,7 @@ public class UIManager : Singleton<UIManager>
 	public async void TurnOnOptionsMenu()
 	{	
 		_mainMenuAnimator.CrossFade(OUTMENU_TAG, 0f);
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(500);
 		_mainMenuMenu.SetActive(false);
 		_optionsMenu.SetActive(true);
@@ -215,6 +220,7 @@ public class UIManager : Singleton<UIManager>
 	public async void TurnOffOptionsMenu()
 	{
 		_optionsMenuAnimator.CrossFade(OUT_TAG, 0f);
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(500);
 		_optionsMenu.SetActive(false);
 		_mainMenuMenu.SetActive(true);
@@ -224,6 +230,7 @@ public class UIManager : Singleton<UIManager>
 	public async void TurnOnLevelSelection()
 	{
 		_mainMenuAnimator.CrossFade(OUTMENU_TAG, 0f);
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(500);
 		_mainMenuMenu.SetActive(false);
 		_levelSelection.SetActive(true);
@@ -233,10 +240,17 @@ public class UIManager : Singleton<UIManager>
 	public async void TurnOffLevelSelection()
 	{
 		_levelSelectionAnimator.CrossFade(OUT_TAG, 0f);
+		AudioManager.Instance.PlaySfx("UIClick");
 		await Task.Delay(500);
 		_levelSelection.SetActive(false);
 		_mainMenuMenu.SetActive(true);
 		_mainMenuAnimator.CrossFade(INMENU_TAG, 0f);
+	}
+
+	public void ExitGame()
+	{
+		Application.Quit();
+		AudioManager.Instance.PlaySfx("UIClick");
 	}
 
 	public void SetMusicVolume()

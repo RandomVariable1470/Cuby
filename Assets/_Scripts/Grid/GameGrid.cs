@@ -22,7 +22,6 @@ public class GameGrid : Singleton<GameGrid>
     private GameManager _gameManager;
     private ObjectPool<GameObject> _pool;
     private float _delay;
-    private int count;
 
     private void Awake() 
     {
@@ -47,7 +46,6 @@ public class GameGrid : Singleton<GameGrid>
         {
             StartCoroutine(CreateGrid());
             _gameManager = GameManager.Instance;
-            currentSpeedMultiplier = 1.0f;
         }
         catch (Exception e)
         {
@@ -119,7 +117,7 @@ public class GameGrid : Singleton<GameGrid>
                 if (!cell.SelectedCell)
                 {
                     cell.MakeMeFall(_gridScriptableObject.FallingSpeed);
-                    yield return null;
+                    yield return new WaitForFixedUpdate();
                 }
             }
         }
@@ -183,6 +181,7 @@ public class GameGrid : Singleton<GameGrid>
         {
             for (int x = 0; x < _gridScriptableObject.Width; x++)
             {
+                GameObject cell = _gameGrid[y, x];
                 Vector3 initialPosition = new Vector3(x * _gridScriptableObject.GridSpaceSize, 0, y * _gridScriptableObject.GridSpaceSize);
                 int columnId = y; 
 
@@ -190,10 +189,9 @@ public class GameGrid : Singleton<GameGrid>
                 float sineWave = Mathf.Sin((time + phase) * _gridCellScriptableObject.FloatMagnitude * currentSpeedMultiplier);
                 float yOffset = sineWave * _gridCellScriptableObject.FloatMagnitude;
 
-                GameObject cell = _gameGrid[y, x];
                 if (cell != null)
                 {
-                    Vector3 newPosition = initialPosition + new Vector3(0, yOffset, 0);
+                    Vector3 newPosition = initialPosition + new Vector3(0, yOffset, 0f);
                     cell.transform.position = newPosition;
                 }
             }

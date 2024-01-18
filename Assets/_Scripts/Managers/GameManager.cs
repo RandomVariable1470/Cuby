@@ -69,6 +69,7 @@ public class GameManager : Singleton<GameManager>
     {
         HasCompletedGame = true;
         _uiManager.TurnOffPauseBtn();
+        AudioManager.Instance.StopMusic(SongName);
         StartCoroutine(_gameGrid.DestroyGrid());
 
         if (_gameGrid.HasCompletedFalling)

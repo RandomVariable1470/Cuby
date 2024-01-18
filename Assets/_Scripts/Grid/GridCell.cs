@@ -73,7 +73,7 @@ public class GridCell : MonoBehaviour
         }
     }
 
-    #region Cached Properteis
+    #region Cached Properties
 
     private readonly string DESTROY_TAG = "Destroy";
 

@@ -22,6 +22,7 @@ public class LevelSelector : MonoBehaviour
 
     public void GoToLevel(string levelName)
     {
+        AudioManager.Instance.PlaySfx("UIClick");
         SceneTransitioner.Instance.LoadScene(levelName, SceneTransitionMode.Circle);
     }
 }
