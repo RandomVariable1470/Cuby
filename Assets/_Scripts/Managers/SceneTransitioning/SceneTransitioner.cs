@@ -5,8 +5,15 @@ using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Canvas))]
-public class SceneTransitioner : SingletonPersistent<SceneTransitioner>
+public class SceneTransitioner : MonoBehaviour
 {
+    private static SceneTransitioner _instance;
+    public static SceneTransitioner Instance
+    {
+        get => _instance;
+        private set => _instance = value;
+    }
+
     private Canvas TransitionCanvas;
     [SerializeField]
     private List<Transition> Transitions = new();
@@ -14,9 +21,18 @@ public class SceneTransitioner : SingletonPersistent<SceneTransitioner>
     private AsyncOperation LoadLevelOperation;
     private AbstractSceneTransitionScriptableObject ActiveTransition;
 
-    private void Start()
+    private void Awake()
     {
+        if (Instance != null)
+        {
+            Debug.LogWarning($"Invalid configuration. Duplicate Instances found! First one: {Instance.name} Second one: {name}. Destroying second one.");
+            Destroy(gameObject);
+            return;
+        }
+
         SceneManager.activeSceneChanged += HandleSceneChange;
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
         
         TransitionCanvas = GetComponent<Canvas>();
         TransitionCanvas.enabled = false;
