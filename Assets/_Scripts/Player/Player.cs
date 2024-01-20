@@ -20,6 +20,10 @@ public class Player : MonoBehaviour
     [HideInInspector] public Animator Animator;
 
     //Private Variables
+    
+    public delegate void GroundedChangedEventHandler(bool isGrounded);
+    public event GroundedChangedEventHandler OnGroundedChanged;
+
     private SwipeListener swipeListener;
 
     private GridCell _gridCellRight, _gridCellLeft, _gridCellBack, _gridCellFront;
@@ -30,6 +34,7 @@ public class Player : MonoBehaviour
     private bool _isRotating = false;
     private bool _wasMoving;
     private bool _canSwipe = true;
+    private bool _isGrounded;
     private float _swipeCooldownTimer = 0f;
 
     private Quaternion _targetRotation;
@@ -53,6 +58,8 @@ public class Player : MonoBehaviour
         _gameManager = GameManager.Instance;
         Animator = GetComponent<Animator>();
         _coll = GetComponent<Collider>();
+
+        OnGroundedChanged += HandleGroundChanged;
     }
 
     private void OnEnable()
@@ -67,14 +74,19 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        RaycastWork();
-        AssignCellPoints();
-        SwipeEffects();
         SwipeCounter();
     }
 
     private void FixedUpdate() 
     {
+        bool grounded = IsGrounded();
+
+        if (grounded != _isGrounded)
+        {
+            _isGrounded = grounded;
+            OnGroundedChanged?.Invoke(_isGrounded);
+        }
+
         ApplyExtraGravity();
     }
 
@@ -84,7 +96,18 @@ public class Player : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, _player.GroundCheck, _player.GridCellLayerMask);
+        bool grounded = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, _player.GroundCheck, _player.GridCellLayerMask);
+        return grounded;
+    }
+
+    private void HandleGroundChanged(bool isGrounded)
+    {
+        if (isGrounded)
+        {
+            RaycastWork();
+            AssignCellPoints();
+            SwipeEffects();
+        }
     }
 
     private void ApplyExtraGravity()
@@ -169,7 +192,7 @@ public class Player : MonoBehaviour
 
         switch (swipe)
         {
-            case "Up":
+            case DirectionId.ID_UP:
                 if (_gridCellFront != null && !_gridCellFront.CantGo)
                 {
                     MakePlayerJumpToCell(_frontCellPoint);
@@ -181,7 +204,19 @@ public class Player : MonoBehaviour
                 }
                 break;
 
-            case "Down":
+            case DirectionId.ID_UP_LEFT:
+                if (_gridCellFront != null && !_gridCellFront.CantGo)
+                {
+                    MakePlayerJumpToCell(_frontCellPoint);
+                    RotateCubeSmoothly(Quaternion.Euler(90, 0, 0));
+                }
+                else
+                {
+                    AudioManager.Instance.PlaySfx("CantGo");
+                }
+                break;
+
+            case DirectionId.ID_DOWN:
                 if (_gridCellBack != null && !_gridCellBack.CantGo)
                 {
                     MakePlayerJumpToCell(_backCellPoint);
@@ -193,7 +228,19 @@ public class Player : MonoBehaviour
                 }
                 break;
 
-            case "Right":
+            case DirectionId.ID_DOWN_RIGHT:
+                if (_gridCellBack != null && !_gridCellBack.CantGo)
+                {
+                    MakePlayerJumpToCell(_backCellPoint);
+                    RotateCubeSmoothly(Quaternion.Euler(-90, 0, 0));
+                }
+                else
+                {
+                    AudioManager.Instance.PlaySfx("CantGo");
+                }
+                break;
+
+            case DirectionId.ID_RIGHT:
                 if (_gridCellLeft != null && !_gridCellLeft.CantGo)
                 {
                     MakePlayerJumpToCell(_leftCellPoint);
@@ -205,7 +252,31 @@ public class Player : MonoBehaviour
                 }
                 break;
 
-            case "Left":
+            case DirectionId.ID_UP_RIGHT:
+                if (_gridCellLeft != null && !_gridCellLeft.CantGo)
+                {
+                    MakePlayerJumpToCell(_leftCellPoint);
+                    RotateCubeSmoothly(Quaternion.Euler(0, 0, 90));
+                }
+                else
+                {
+                    AudioManager.Instance.PlaySfx("CantGo");
+                }
+                break;
+
+            case DirectionId.ID_LEFT:
+                if (_gridCellRight != null && !_gridCellRight.CantGo)
+                {
+                    MakePlayerJumpToCell(_rightCellPoint);
+                    RotateCubeSmoothly(Quaternion.Euler(0, 0, -90));
+                }
+                else
+                {
+                    AudioManager.Instance.PlaySfx("CantGo");
+                }
+                break;
+
+            case DirectionId.ID_DOWN_LEFT:
                 if (_gridCellRight != null && !_gridCellRight.CantGo)
                 {
                     MakePlayerJumpToCell(_rightCellPoint);

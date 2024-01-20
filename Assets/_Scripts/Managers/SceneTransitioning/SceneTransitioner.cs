@@ -25,7 +25,6 @@ public class SceneTransitioner : MonoBehaviour
     {
         if (Instance != null)
         {
-            Debug.LogWarning($"Invalid configuration. Duplicate Instances found! First one: {Instance.name} Second one: {name}. Destroying second one.");
             Destroy(gameObject);
             return;
         }

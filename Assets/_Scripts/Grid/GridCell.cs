@@ -32,11 +32,6 @@ public class GridCell : MonoBehaviour
         _anim = GetComponent<Animator>();
     }
 
-    private void Update() 
-    {
-        if (CantGo) _cantGoSign.SetActive(true);
-    }
-
     public void SetColumn(int column)
     {
         _columnId = column;
@@ -53,6 +48,12 @@ public class GridCell : MonoBehaviour
     {
         _posX = x;
         _posY = y;
+    }
+
+    public void SetAsProhibitedCell()
+    {
+        _cantGoSign.SetActive(true);
+        CantGo = true;
     }
 
     public Vector2Int GetPosition()

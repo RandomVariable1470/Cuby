@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -9,6 +10,10 @@ public class GameManager : Singleton<GameManager>
     [field: Header("References")]
     [field: SerializeField] public ColorCode ColorCode {get; private set;}
     [field: SerializeField] public ColorCode SelectedCellColorCode {get; private set;}
+    [SerializeField] private PauseMenuUI _pauseMenuUI;
+    [SerializeField] private LevelCompletionUI _levelCompletionMenuUI;
+    [SerializeField] private TextMeshProUGUI _buildNo;
+    [SerializeField] private TextMeshProUGUI _levelIndicator;
     [field: Space(5)]
     [field: SerializeField] public string ThisLevelName { get; private set;}
     [field: SerializeField] public string NextLevelName { get; private set;}
@@ -16,33 +21,29 @@ public class GameManager : Singleton<GameManager>
     [field: SerializeField] public string SongName { get; private set;}
     [field: Space(5)]
     [field: SerializeField] public bool IsMainMenu { get; private set;}
+    [field: SerializeField] public bool IsPaused { get; set;}
     [field: SerializeField] public int LevelToUnlock { get; private set;}
-    [field: SerializeField] public bool IsPaused { get; private set;}
     [field: Space(5)]
-    [field: SerializeField] public AudioMixer _audioMicer { get; private set;}
+    [field: SerializeField] public AudioMixer _audioMixer { get; private set;}
 
     [HideInInspector] public bool HasCompletedGame {get; set;}
-    [HideInInspector] public GridCell _selectedCell {get; set;}
+    [HideInInspector] public GridCell SelectedCell {get; set;}
 
     private GameGrid _gameGrid;
-    private UIManager _uiManager;
 
     #region Initilization
 
     private void Start() 
     {
         _gameGrid = GameGrid.Instance;
-        _uiManager = UIManager.Instance;
+
+        Application.targetFrameRate = 60;
 
         AudioManager.Instance.PlayMusic(SongName);
-    }
 
-    private void Update() 
-    {
-        SetSelectedCell();
-
-        if (Time.timeScale != 0) IsPaused = false;
-        else IsPaused = true;
+        _buildNo.text = $"Version: {Application.version}";
+        if (_levelIndicator != null) 
+            _levelIndicator.text = ThisLevelName;
     }
 
     #endregion
@@ -68,7 +69,7 @@ public class GameManager : Singleton<GameManager>
     private async void LevelCompletion()
     {
         HasCompletedGame = true;
-        _uiManager.TurnOffPauseBtn();
+        _pauseMenuUI.TurnOffPauseBtn();
         AudioManager.Instance.StopMusic(SongName);
         StartCoroutine(_gameGrid.DestroyGrid());
 
@@ -79,16 +80,8 @@ public class GameManager : Singleton<GameManager>
 
             await Task.Delay(500);
             
-            _uiManager.TurnOnLevelCompletionMenu();
+            _levelCompletionMenuUI.OpenLevelMenu();
             PlayerPrefs.SetInt("levelReached", LevelToUnlock);
-        }
-    }
-
-    private void SetSelectedCell()
-    {
-        if (_selectedCell != null)
-        {
-            _selectedCell.SelectedCell = true;
         }
     }
     

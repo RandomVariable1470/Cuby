@@ -138,7 +138,7 @@ public class GameGrid : Singleton<GameGrid>
 
                 if (grid != null)
                 {
-                    grid.CantGo = true;
+                    grid.SetAsProhibitedCell();
                 }
             }
             else
@@ -153,7 +153,8 @@ public class GameGrid : Singleton<GameGrid>
         if (x >= 0 && y >= 0 && x < _gameGrid.GetLength(1) && y < _gameGrid.GetLength(0))
         {
             GameObject cellToColor = _gameGrid[y, x];
-            _gameManager._selectedCell = cellToColor.GetComponent<GridCell>();
+            _gameManager.SelectedCell = cellToColor.GetComponent<GridCell>();
+            _gameManager.SelectedCell.SelectedCell = true;;
             _gameManager.ChangeSelectedCellColor(_gridScriptableObject.SelectedCellColorCode);
             
             if (cellToColor != null)
