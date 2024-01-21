@@ -27,6 +27,10 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private RectTransform _infoMenuTransform;
     [Space(15)]
     [SerializeField] private Button[] _levelbuttons;
+    [Space(15)]
+    [SerializeField] private CanvasGroup _howToPlayTextCanvasGroup;
+    [SerializeField] private GameObject _howToPlayGame;
+    [SerializeField] private RectTransform _howToPlayGameTransform;
 
     private void Start() 
     {
@@ -46,6 +50,7 @@ public class MainMenuUI : MonoBehaviour
         _mainMenuBG.LeanAlpha(1f, 0.3f);
         _mainMenuTransform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutBounce().delay = 0.2f;
         _titleScreenText.transform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutBounce().delay = 0.2f;
+        _howToPlayTextCanvasGroup.LeanAlpha(1f, 0.3f);
     }
 
     public void GoToNextLevel(string levelName)
@@ -62,6 +67,7 @@ public class MainMenuUI : MonoBehaviour
     public void OpenSettingsMenu()
     {
         _titleScreenText.transform.LeanScale(new Vector3(0.75f, 0.75f, 0.75f), 0.5f).setEaseInSine();
+        _howToPlayTextCanvasGroup.LeanAlpha(0f, 0.3f);
         LTDescr _ = _mainMenuTransform.LeanScale(new Vector3(0f, 0f, 0f), 0.5f).setEaseInBounce();
         _.setOnComplete(() =>
         {
@@ -79,6 +85,7 @@ public class MainMenuUI : MonoBehaviour
             _settingsMenu.SetActive(false);
             _mainMenu.SetActive(true);
             _titleScreenText.transform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutSine();
+            _howToPlayTextCanvasGroup.LeanAlpha(1f, 0.3f);
             _mainMenuTransform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutBounce();
         });
     }
@@ -86,6 +93,7 @@ public class MainMenuUI : MonoBehaviour
     public void OpenLevelSelector()
     {
         _titleScreenText.transform.LeanScale(new Vector3(0.75f, 0.75f, 0.75f), 0.5f).setEaseInSine();
+        _howToPlayTextCanvasGroup.LeanAlpha(0f, 0.3f);
         LTDescr _ = _mainMenuTransform.LeanScale(new Vector3(0f, 0f, 0f), 0.5f).setEaseInBounce();
         _.setOnComplete(() =>
         {
@@ -103,6 +111,8 @@ public class MainMenuUI : MonoBehaviour
         {
             _levelSelector.SetActive(false);
             _mainMenu.SetActive(true);
+            _titleScreenText.transform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutSine();
+            _howToPlayTextCanvasGroup.LeanAlpha(1f, 0.3f);
             _mainMenuTransform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutBounce();
         });
     }
@@ -110,6 +120,7 @@ public class MainMenuUI : MonoBehaviour
     public void OpenInfoMenu()
     {
         _titleScreenText.transform.LeanScale(new Vector3(0.75f, 0.75f, 0.75f), 0.5f).setEaseInSine();
+        _howToPlayTextCanvasGroup.LeanAlpha(0f, 0.3f);
         LTDescr _ = _mainMenuTransform.LeanScale(new Vector3(0f, 0f, 0f), 0.5f).setEaseInBounce();
         _.setOnComplete(() =>
         {
@@ -127,6 +138,33 @@ public class MainMenuUI : MonoBehaviour
             _infoMenu.SetActive(false);
             _mainMenu.SetActive(true);
             _titleScreenText.transform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutSine();
+            _howToPlayTextCanvasGroup.LeanAlpha(1f, 0.3f);
+            _mainMenuTransform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutBounce();
+        });
+    }
+
+    public void OpenHowToPlayMenu()
+    {
+        _titleScreenText.transform.LeanScale(new Vector3(0.5f, 0.45f, 0.5f), 0.5f).setEaseInSine();
+        _howToPlayTextCanvasGroup.LeanAlpha(0f, 0.3f);
+        LTDescr _ = _mainMenuTransform.LeanScale(new Vector3(0f, 0f, 0f), 0.5f).setEaseInBounce();
+        _.setOnComplete(() =>
+        {
+            _mainMenu.SetActive(false);
+            _howToPlayGame.SetActive(true);
+            _howToPlayGameTransform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutCirc();
+        });
+    }
+
+    public void CloseHowToPlayMenu()
+    {
+        LTDescr _ = _howToPlayGameTransform.LeanScale(new Vector3(0f, 0f, 0f), 0.5f).setEaseInCirc();
+        _.setOnComplete(() =>
+        {
+            _howToPlayGame.SetActive(false);
+            _mainMenu.SetActive(true);
+            _titleScreenText.transform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutSine();
+            _howToPlayTextCanvasGroup.LeanAlpha(1f, 0.3f);
             _mainMenuTransform.LeanScale(new Vector3(1f, 1f, 1f), 0.5f).setEaseOutBounce();
         });
     }

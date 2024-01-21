@@ -1,14 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SliderUI : MonoBehaviour
+public class CanvasUI : MonoBehaviour
 {   
     [SerializeField] private Slider _musicSlider;
     [SerializeField] private Slider _sfxSlider;
+    [SerializeField] private TextMeshProUGUI _fpsText;
     
     private GameManager _gameManager;
+
+	private float pollingTime = 1f;
+	private float time;
+	private int frameCount;
+
+ 
+	void Update() 
+    {
+		time += Time.deltaTime;
+
+		frameCount++;
+
+		if (time >= pollingTime) 
+        {
+			int frameRate = Mathf.RoundToInt((float)frameCount / time);
+			_fpsText.text = frameRate.ToString() + " fps";
+
+			time -= pollingTime;
+			frameCount = 0;
+		}
+	}
 
     private void Awake() 
     {

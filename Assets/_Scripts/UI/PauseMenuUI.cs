@@ -23,7 +23,7 @@ public class PauseMenuUI : MonoBehaviour
         _pauseMenuBG.alpha = 0f;
         _pauseMenuBG.LeanAlpha(1f, 0.5f).setIgnoreTimeScale(true);
 
-        _pauseMenuTransform.LeanMoveX(40f, 0.5f).setEaseInExpo().setIgnoreTimeScale(true).delay = 0.1f;
+        _pauseMenuTransform.LeanMoveX(40f, .5f).setEaseInCubic().setIgnoreTimeScale(true).delay = 0.1f;
         Time.timeScale = 0f;
         _gameManager.IsPaused = true;
         AudioManager.Instance.StopMusic(_gameManager.SongName);
@@ -33,7 +33,7 @@ public class PauseMenuUI : MonoBehaviour
     {
         _pauseMenuBG.LeanAlpha(0f, 0.5f).setIgnoreTimeScale(true); 
 
-        LTDescr _second = _pauseMenuTransform.LeanMoveX(-500f, 0.5f).setEaseOutExpo().setDelay(0.1f).setIgnoreTimeScale(true);
+        LTDescr _second = _pauseMenuTransform.LeanMoveX(-1000f, .5f).setEaseOutCubic().setDelay(0.1f).setIgnoreTimeScale(true);
         _second.setOnComplete(() =>
         {
             _pauseMenuBtn.SetActive(true);
