@@ -173,9 +173,5 @@ public class MainMenuUI : MonoBehaviour
     {
         Application.OpenURL("https://github.com/RandomVariable1470/Cuby");
     }
-
-    public void OpenItchLink()
-    {
-        Application.OpenURL("");
-    }
+    
 }

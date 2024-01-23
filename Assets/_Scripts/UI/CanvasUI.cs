@@ -9,6 +9,7 @@ public class CanvasUI : MonoBehaviour
     [SerializeField] private Slider _musicSlider;
     [SerializeField] private Slider _sfxSlider;
     [SerializeField] private TextMeshProUGUI _fpsText;
+    [SerializeField] private TextMeshProUGUI _levelCompletionText;
     
     private GameManager _gameManager;
 
@@ -16,22 +17,6 @@ public class CanvasUI : MonoBehaviour
 	private float time;
 	private int frameCount;
 
- 
-	void Update() 
-    {
-		time += Time.deltaTime;
-
-		frameCount++;
-
-		if (time >= pollingTime) 
-        {
-			int frameRate = Mathf.RoundToInt((float)frameCount / time);
-			_fpsText.text = frameRate.ToString() + " fps";
-
-			time -= pollingTime;
-			frameCount = 0;
-		}
-	}
 
     private void Awake() 
     {
@@ -55,6 +40,27 @@ public class CanvasUI : MonoBehaviour
             SetSFXVolume();
         }
     }
+
+    private void Start() 
+    {
+        if (_levelCompletionText != null ) _levelCompletionText.text = _gameManager.ThisLevelName + " Completed";
+    }
+
+    private void Update() 
+    {
+		time += Time.deltaTime;
+
+		frameCount++;
+
+		if (time >= pollingTime) 
+        {
+			int frameRate = Mathf.RoundToInt((float)frameCount / time);
+			_fpsText.text = frameRate.ToString() + " fps";
+
+			time -= pollingTime;
+			frameCount = 0;
+		}
+	}
 
     public void ClickSound()
     {

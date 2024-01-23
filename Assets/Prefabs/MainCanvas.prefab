@@ -405,6 +405,7 @@ MonoBehaviour:
   _musicSlider: {fileID: 6646378415266463315}
   _sfxSlider: {fileID: 6469948730777269787}
   _fpsText: {fileID: 7822941998023443664}
+  _levelCompletionText: {fileID: 787479557012671735}
 --- !u!1 &1570577301100561067
 GameObject:
   m_ObjectHideFlags: 0
@@ -2827,7 +2828,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Options
+  m_text: Settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 53ccb34ca075a29498ecf0da4d346ff3, type: 2}
   m_sharedMaterial: {fileID: 4287188507776550029, guid: 53ccb34ca075a29498ecf0da4d346ff3,
@@ -6194,7 +6195,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -500.00012, y: 0}
+  m_AnchoredPosition: {x: -1000, y: 0}
   m_SizeDelta: {x: 475, y: -80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &5005932981821726366

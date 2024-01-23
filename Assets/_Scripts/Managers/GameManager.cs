@@ -41,9 +41,15 @@ public class GameManager : Singleton<GameManager>
 
         AudioManager.Instance.PlayMusic(SongName);
 
-        _buildNo.text = $"Version: {Application.version}";
+        if (_buildNo != null)
+        {
+            _buildNo.text = $"Version: {Application.version}";
+        }
+    
         if (_levelIndicator != null) 
+        {
             _levelIndicator.text = ThisLevelName;
+        }
     }
 
     #endregion
@@ -81,7 +87,11 @@ public class GameManager : Singleton<GameManager>
             await Task.Delay(500);
             
             _levelCompletionMenuUI.OpenLevelMenu();
-            PlayerPrefs.SetInt("levelReached", LevelToUnlock);
+            int levelReached = PlayerPrefs.GetInt("levelReached");
+            if (levelReached <= LevelToUnlock)
+            {
+                PlayerPrefs.SetInt("levelReached", LevelToUnlock);
+            }
         }
     }
     

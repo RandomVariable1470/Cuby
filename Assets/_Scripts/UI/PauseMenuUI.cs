@@ -49,7 +49,7 @@ public class PauseMenuUI : MonoBehaviour
     {
         _pauseMenuBG.LeanAlpha(0f, 0.5f).setIgnoreTimeScale(true);
 
-        LTDescr _ = _pauseMenuTransform.LeanMoveX(-500f, 0.5f).setEaseOutExpo().setDelay(0.1f).setIgnoreTimeScale(true);
+        LTDescr _ = _pauseMenuTransform.LeanMoveX(-1000f, 0.5f).setEaseOutExpo().setDelay(0.1f).setIgnoreTimeScale(true);
         _.setOnComplete(() =>
         {
             _pauseMenuBtn.SetActive(true);
@@ -62,7 +62,7 @@ public class PauseMenuUI : MonoBehaviour
 
     public void OpenSettingsMenu()
     {
-        LTDescr _ = _pauseMenuTransform.LeanMoveX(-500f, 0.5f).setEaseOutExpo().setDelay(0.1f).setIgnoreTimeScale(true);
+        LTDescr _ = _pauseMenuTransform.LeanMoveX(-1000f, 0.5f).setEaseOutExpo().setDelay(0.1f).setIgnoreTimeScale(true);
         _.setOnComplete(() =>
         {
             _optionsMenu.SetActive(true);
@@ -84,7 +84,7 @@ public class PauseMenuUI : MonoBehaviour
     {
         _pauseMenuBG.LeanAlpha(0f, 0.5f);
 
-        LTDescr _ = _pauseMenuTransform.LeanMoveX(-500f, 0.5f).setEaseOutExpo().setDelay(0.1f).setIgnoreTimeScale(true);
+        LTDescr _ = _pauseMenuTransform.LeanMoveX(-1000f, 0.5f).setEaseOutExpo().setDelay(0.1f).setIgnoreTimeScale(true);
         _.setOnComplete(() =>
         {
             _pauseMenuBtn.SetActive(true);
